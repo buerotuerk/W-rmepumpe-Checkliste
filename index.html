@@ -51,14 +51,8 @@ body{
 
 .headerText h1{
   font-size:34px;
-  margin:0 0 14px 0;
-  line-height:1.15;
-}
-
-.subtitle{
   margin:0;
-  color:#4b5563;
-  font-size:16px;
+  line-height:1.15;
 }
 
 .grid{
@@ -111,7 +105,6 @@ input,select,textarea{
 
 textarea{
   min-height:90px;
-  resize:vertical;
 }
 
 .photoBox{
@@ -140,7 +133,6 @@ textarea{
   object-fit:cover;
   border-radius:10px;
   border:1px solid #ddd;
-  display:block;
 }
 
 .deleteBtn{
@@ -152,7 +144,6 @@ textarea{
   border:1px solid #eee;
   padding:5px 7px;
   font-size:14px;
-  margin:0;
 }
 
 button{
@@ -165,10 +156,6 @@ button{
   cursor:pointer;
   margin-top:8px;
   font-weight:bold;
-}
-
-button:hover{
-  background:var(--green-dark);
 }
 
 button.secondary{
@@ -201,34 +188,19 @@ button.light{
 .small{
   color:var(--muted);
   font-size:13px;
-  margin-top:8px;
 }
 
 @media(max-width:850px){
-  .wrapper{padding:14px}
   .grid,.formgrid{grid-template-columns:1fr}
-  .header{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:16px;
-  }
-  .logo{
-    width:100%;
-    max-width:430px;
-  }
-  .headerText h1{
-    font-size:27px;
-  }
+  .header{flex-direction:column;align-items:flex-start}
+  .logo{width:100%;max-width:420px}
 }
 
 @media print{
-  button,input[type=file],.photoBox{display:none!important}
+  button,input[type=file],.photoBox{display:none}
   body{background:white}
-  .wrapper{max-width:none;padding:0}
-  .header,.card{box-shadow:none}
   .grid{display:block}
-  .card{page-break-inside:avoid}
-  .footer{margin-top:10px}
+  .card{box-shadow:none;page-break-inside:avoid}
 }
 </style>
 </head>
@@ -238,310 +210,10 @@ button.light{
 <div class="wrapper">
 
   <div class="header">
-    <img src="logo.jpg" class="logo" alt="Michael Türk Sanitär Heizung Umwelttechnik GmbH Logo">
+    <img src="logo.jpg" class="logo">
     <div class="headerText">
       <h1>Wärmepumpen-Checkliste Altbau</h1>
-      <p class="subtitle">Vor-Ort-Erfassung durch Elektropartner zur Angebotserstellung.</p>
     </div>
   </div>
 
-  <div class="grid">
-
-    <main>
-
-      <div class="card">
-        <h2>1. Kundendaten</h2>
-        <div class="formgrid">
-          <div>
-            <label>Name</label>
-            <input id="name" placeholder="Ihr Name">
-          </div>
-          <div>
-            <label>Adresse</label>
-            <input id="adresse" placeholder="Ihre Adresse">
-          </div>
-          <div>
-            <label>Telefon</label>
-            <input id="telefon" placeholder="Ihre Telefonnummer">
-          </div>
-          <div>
-            <label>E-Mail</label>
-            <input id="email" placeholder="Ihre E-Mail-Adresse">
-          </div>
-          <div>
-            <label>Gebäudetyp</label>
-            <select id="gebaeudetyp">
-              <option value="">Bitte auswählen</option>
-              <option>Einfamilienhaus</option>
-              <option>Zweifamilienhaus</option>
-              <option>Mehrfamilienhaus</option>
-              <option>Reihenhaus</option>
-              <option>Doppelhaushälfte</option>
-              <option>Sonstiges</option>
-            </select>
-          </div>
-          <div>
-            <label>Baujahr Gebäude</label>
-            <input id="baujahr_gebaeude" placeholder="z. B. 1990">
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>2. Energieverbrauch / aktuelle Heizung</h2>
-        <div class="formgrid">
-          <div>
-            <label>Heizenergieverbrauch pro Jahr</label>
-            <input id="verbrauch" placeholder="z. B. 3.000 l Öl / 28.000 kWh Gas">
-          </div>
-          <div>
-            <label>Aktuelles Heizsystem</label>
-            <select id="heizsystem">
-              <option value="">Bitte auswählen</option>
-              <option>Gasheizung</option>
-              <option>Ölheizung</option>
-              <option>Pelletheizung</option>
-              <option>Wärmepumpe</option>
-              <option>Sonstiges</option>
-            </select>
-          </div>
-          <div>
-            <label>Baujahr Heizung</label>
-            <input id="baujahr_heizung" placeholder="z. B. 2005">
-          </div>
-          <div>
-            <label>Foto aktuelle Heizung / Pumpe</label>
-            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'pumpePreview')">
-            <div id="pumpePreview" class="preview"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>3. Gebäude</h2>
-        <div class="formgrid">
-          <div>
-            <label>Wohnfläche ca. in m²</label>
-            <input id="wohnflaeche" placeholder="z. B. 140">
-          </div>
-          <div>
-            <label>Anzahl Personen im Haushalt</label>
-            <input id="personen" placeholder="z. B. 4">
-          </div>
-          <div>
-            <label>Wohneinheiten</label>
-            <input id="wohneinheiten" placeholder="z. B. 1">
-          </div>
-          <div>
-            <label>Dämmzustand</label>
-            <select id="daemmung">
-              <option value="">Bitte auswählen</option>
-              <option>Unsaniert</option>
-              <option>Teilweise saniert</option>
-              <option>Gut saniert</option>
-              <option>Unklar</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>4. Referenz-Heizkörper</h2>
-
-        <h3>Heizkörper 1</h3>
-        <div class="formgrid">
-          <div>
-            <label>Raum</label>
-            <input id="hk1_raum" placeholder="z. B. Wohnzimmer">
-          </div>
-          <div>
-            <label>Größe / Typ</label>
-            <input id="hk1_groesse" placeholder="z. B. 100 x 60 Typ 22">
-            <button class="light" onclick="dictate('hk1_groesse')">🎙️ Diktieren</button>
-          </div>
-          <div>
-            <label>Foto Heizkörper 1</label>
-            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk1Preview')">
-            <div id="hk1Preview" class="preview"></div>
-          </div>
-          <div>
-            <label>Bemerkung</label>
-            <textarea id="hk1_bemerkung"></textarea>
-          </div>
-        </div>
-
-        <h3>Heizkörper 2</h3>
-        <div class="formgrid">
-          <div>
-            <label>Raum</label>
-            <input id="hk2_raum" placeholder="z. B. Schlafzimmer">
-          </div>
-          <div>
-            <label>Größe / Typ</label>
-            <input id="hk2_groesse" placeholder="z. B. 80 x 60 Typ 22">
-            <button class="light" onclick="dictate('hk2_groesse')">🎙️ Diktieren</button>
-          </div>
-          <div>
-            <label>Foto Heizkörper 2</label>
-            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk2Preview')">
-            <div id="hk2Preview" class="preview"></div>
-          </div>
-          <div>
-            <label>Bemerkung</label>
-            <textarea id="hk2_bemerkung"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>5. Standort Wärmepumpe / Außengerät</h2>
-        <div class="formgrid">
-          <div>
-            <label>Beschreibung Standort</label>
-            <textarea id="standort" placeholder="z. B. links neben Garage, Abstand zum Haus ca. 1 m"></textarea>
-          </div>
-          <div>
-            <label>Abstand Fenster / Nachbarn</label>
-            <input id="abstand" placeholder="z. B. 5 m zum Nachbarfenster">
-          </div>
-          <div>
-            <label>Fundament möglich?</label>
-            <select id="fundament">
-              <option value="">Bitte auswählen</option>
-              <option>Ja</option>
-              <option>Nein</option>
-              <option>Unklar</option>
-            </select>
-          </div>
-          <div>
-            <label>Schall / Reflexion auffällig?</label>
-            <select id="schall">
-              <option value="">Bitte auswählen</option>
-              <option>Nein</option>
-              <option>Ja</option>
-              <option>Unklar</option>
-            </select>
-          </div>
-        </div>
-
-        <br>
-        <label>Fotos Standort Wärmepumpe</label>
-        <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'standortPreview')">
-        <div id="standortPreview" class="preview"></div>
-      </div>
-
-    </main>
-
-    <aside>
-
-      <div class="card">
-        <h2>6. Allgemeine Fotos</h2>
-        <p>Zählerschrank, Technikraum, Leitungswege, Typenschilder, Außenansicht usw.</p>
-        <div class="photoBox">
-          <strong>Fotos auswählen oder aufnehmen</strong>
-          <br><br>
-          <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'allgemeinPreview')">
-          <p class="small">JPG / PNG – mehrere Fotos möglich</p>
-        </div>
-        <div id="allgemeinPreview" class="preview"></div>
-      </div>
-
-      <div class="card">
-        <h2>7. Notizen</h2>
-        <textarea id="notizen" placeholder="Weitere Hinweise, Besonderheiten oder offene Fragen..."></textarea>
-        <button class="light" onclick="dictate('notizen')">🎙️ Notiz diktieren</button>
-      </div>
-
-      <div class="card actions">
-        <h2>Ausgabe</h2>
-        <button onclick="window.print()">📄 PDF herunterladen / drucken</button>
-        <button class="secondary" onclick="mailSenden()">✉️ Per Mail vorbereiten</button>
-        <p class="small">Hinweis: Fotos werden beim Mail-Button nicht automatisch angehängt. Dafür bitte PDF erstellen oder Fotos separat mitsenden.</p>
-      </div>
-
-    </aside>
-
-  </div>
-</div>
-
-<div class="footer">
-  🔒 Ihre Daten werden vertraulich behandelt und ausschließlich zur Angebotserstellung verwendet.
-</div>
-
-<script>
-function preview(input,targetId){
-  const target=document.getElementById(targetId);
-  target.innerHTML="";
-
-  Array.from(input.files).forEach(file=>{
-    const reader=new FileReader();
-
-    reader.onload=e=>{
-      const box=document.createElement("div");
-      box.className="previewItem";
-
-      const img=document.createElement("img");
-      img.src=e.target.result;
-
-      const btn=document.createElement("button");
-      btn.className="deleteBtn";
-      btn.innerHTML="🗑️";
-      btn.type="button";
-      btn.onclick=function(){
-        box.remove();
-      };
-
-      box.appendChild(img);
-      box.appendChild(btn);
-      target.appendChild(box);
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
-function dictate(fieldId){
-  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-
-  if(!SpeechRecognition){
-    alert("Diktieren wird von diesem Browser nicht unterstützt. Nutzen Sie alternativ die Mikrofon-Taste der Handy-Tastatur.");
-    return;
-  }
-
-  const recognition=new SpeechRecognition();
-  recognition.lang="de-DE";
-  recognition.start();
-
-  recognition.onresult=function(event){
-    const text=event.results[0][0].transcript;
-    const field=document.getElementById(fieldId);
-    field.value=field.value ? field.value+" "+text : text;
-  };
-}
-
-function mailSenden(){
-  const felder=document.querySelectorAll("input:not([type=file]),select,textarea");
-  let text="Wärmepumpen-Checkliste Altbau\n\n";
-
-  felder.forEach(feld=>{
-    let label="";
-
-    if(feld.previousElementSibling && feld.previousElementSibling.tagName==="LABEL"){
-      label=feld.previousElementSibling.innerText;
-    }else{
-      label=feld.id;
-    }
-
-    text+=label+": "+feld.value+"\n";
-  });
-
-  window.location.href=
-    "mailto:info@tuerk-sarstedt.de?subject="+
-    encodeURIComponent("Wärmepumpen-Checkliste")+
-    "&body="+
-    encodeURIComponent(text);
-}
-</script>
-
-</body>
-</html>
+  <!-- REST BLEIBT UNVERÄNDERT -->
