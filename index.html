@@ -6,202 +6,25 @@
 <title>Wärmepumpen-Checkliste Altbau</title>
 
 <style>
-:root{
-  --green:#009681;
-  --green-dark:#007f6e;
-  --dark:#1f2937;
-  --muted:#6b7280;
-  --bg:#f4f7f8;
-  --border:#d9e2e4;
-  --danger:#ef4444;
-}
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:var(--bg);
-  color:var(--dark);
-}
-
-.wrapper{
-  max-width:1220px;
-  margin:auto;
-  padding:24px;
-}
-
-.header{
-  display:flex;
-  align-items:center;
-  gap:40px;
-  margin-bottom:26px;
-  background:white;
-  border-radius:16px;
-  padding:14px 20px;
-  box-shadow:0 3px 12px rgba(0,0,0,.04);
-}
-
-.logo{
-  width:380px;
-  max-width:40%;
-  height:auto;
-  display:block;
-}
-
-.headerText h1{
-  font-size:34px;
-  margin:0;
-  line-height:1.15;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:24px;
-}
-
-.card{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:24px;
-  margin-bottom:22px;
-  box-shadow:0 3px 10px rgba(0,0,0,.04);
-}
-
-h2{
-  color:var(--green);
-  margin:0 0 18px 0;
-  font-size:22px;
-}
-
-h3{
-  margin:18px 0 12px 0;
-  font-size:17px;
-}
-
-.formgrid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px 24px;
-}
-
-label{
-  font-weight:bold;
-  display:block;
-  margin-bottom:7px;
-  font-size:14px;
-}
-
-input,select,textarea{
-  width:100%;
-  padding:13px;
-  border:1px solid #cfd8dc;
-  border-radius:8px;
-  font-size:16px;
-  background:white;
-}
-
-textarea{
-  min-height:90px;
-}
-
-.photoBox{
-  border:2px dashed #8acbc2;
-  padding:22px;
-  border-radius:12px;
-  text-align:center;
-  background:#f6fffd;
-  margin-top:10px;
-}
-
-.preview{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  margin-top:12px;
-}
-
-.previewItem{
-  position:relative;
-}
-
-.preview img{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid #ddd;
-}
-
-.deleteBtn{
-  position:absolute;
-  right:6px;
-  bottom:6px;
-  background:white;
-  color:var(--danger);
-  border:1px solid #eee;
-  padding:5px 7px;
-  font-size:14px;
-}
-
-button{
-  background:var(--green);
-  color:white;
-  border:none;
-  padding:13px 18px;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
-  margin-top:8px;
-  font-weight:bold;
-}
-
-button.secondary{
-  background:#374151;
-}
-
-button.light{
-  background:white;
-  color:var(--green);
-  border:1px solid var(--green);
-  padding:9px 12px;
-  font-size:14px;
-}
-
-.actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.footer{
-  background:var(--green);
-  color:white;
-  text-align:center;
-  padding:14px;
-  margin-top:24px;
-  font-size:15px;
-}
-
-.small{
-  color:var(--muted);
-  font-size:13px;
-}
-
-@media(max-width:850px){
-  .grid,.formgrid{grid-template-columns:1fr}
-  .header{flex-direction:column;align-items:flex-start}
-  .logo{width:100%;max-width:420px}
-}
-
-@media print{
-  button,input[type=file],.photoBox{display:none}
-  body{background:white}
-  .grid{display:block}
-  .card{box-shadow:none;page-break-inside:avoid}
-}
+:root{--green:#009681;--dark:#1f2937;--bg:#f4f7f8;--border:#d9e2e4}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--dark)}
+.wrapper{max-width:1200px;margin:auto;padding:24px}
+.header{display:flex;align-items:center;gap:32px;margin-bottom:24px;background:white;padding:12px;border-radius:12px}
+.logo{max-width:380px;width:40%}
+h1{font-size:34px;margin:0}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+.card{background:white;border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:22px}
+h2{color:var(--green);margin-top:0}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+label{font-weight:bold;display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #cfd8dc;border-radius:8px;font-size:16px}
+textarea{min-height:90px}
+.preview{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+.preview img{width:100%;height:120px;object-fit:cover;border-radius:10px;border:1px solid #ddd}
+.photoBox{border:2px dashed #8acbc2;padding:18px;border-radius:12px;text-align:center;background:#f6fffd}
+button{background:var(--green);color:white;border:none;padding:13px;border-radius:8px;font-size:16px;margin-top:8px}
+.actions{display:flex;flex-direction:column;gap:10px}
+.footer{background:var(--green);color:white;text-align:center;padding:14px;margin-top:24px}
 </style>
 </head>
 
@@ -209,11 +32,79 @@ button.light{
 
 <div class="wrapper">
 
-  <div class="header">
-    <img src="logo.jpg" class="logo">
-    <div class="headerText">
-      <h1>Wärmepumpen-Checkliste Altbau</h1>
-    </div>
-  </div>
+<div class="header">
+<img src="logo.jpg" class="logo">
+<h1>Wärmepumpen-Checkliste Altbau</h1>
+</div>
 
-  <!-- REST BLEIBT UNVERÄNDERT -->
+<div class="grid">
+
+<main>
+
+<div class="card">
+<h2>1. Kundendaten</h2>
+<div class="formgrid">
+<div><label>Name</label><input id="name"></div>
+<div><label>Adresse</label><input id="adresse"></div>
+<div><label>Telefon</label><input id="telefon"></div>
+<div><label>E-Mail</label><input id="email"></div>
+<div><label>Gebäudetyp</label><select id="gebaeudetyp"><option></option><option>Einfamilienhaus</option></select></div>
+<div><label>Baujahr Gebäude</label><input id="baujahr_gebaeude"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>2. Energieverbrauch</h2>
+<input id="verbrauch">
+</div>
+
+</main>
+
+<aside>
+
+<div class="card actions">
+<h2>Ausgabe</h2>
+
+<button onclick="speichern()">💾 Speichern</button>
+<button onclick="laden()">📂 Laden</button>
+
+<button onclick="window.print()">📄 PDF</button>
+<button onclick="mailSenden()">✉️ Mail</button>
+
+</div>
+
+</aside>
+
+</div>
+</div>
+
+<div class="footer">Ihre Daten werden vertraulich behandelt</div>
+
+<script>
+function speichern(){
+let daten={}
+document.querySelectorAll("input,select,textarea").forEach(f=>daten[f.id]=f.value)
+localStorage.setItem("wp",JSON.stringify(daten))
+alert("Gespeichert")
+}
+
+function laden(){
+let d=JSON.parse(localStorage.getItem("wp"))
+if(!d)return alert("Keine Daten")
+Object.keys(d).forEach(id=>{
+let f=document.getElementById(id)
+if(f)f.value=d[id]
+})
+}
+
+function mailSenden(){
+let text=""
+document.querySelectorAll("input,select,textarea").forEach(f=>{
+text+=f.id+": "+f.value+"\n"
+})
+window.location="mailto:?body="+encodeURIComponent(text)
+}
+</script>
+
+</body>
+</html>
