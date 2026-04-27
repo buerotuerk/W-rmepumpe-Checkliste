@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Wärmepumpen-Checkliste Altbau</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    h2 {
+      margin-top: 30px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 6px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 14px 22px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .hinweis {
+      background: #eef2ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Wärmepumpen-Checkliste Altbau</h1>
+    <p>Vor-Ort-Erfassung durch Elektropartner zur Angebotserstellung.</p>
+
+    <h2>1. Kundendaten</h2>
+    <label>Name</label><input id="name">
+    <label>Adresse</label><input id="adresse">
+    <label>Telefon</label><input id="telefon">
+    <label>E-Mail</label><input id="email">
+    <label>Gebäudetyp</label>
+    <select id="gebaeudetyp">
+      <option></option>
+      <option>Einfamilienhaus</option>
+      <option>Zweifamilienhaus</option>
+      <option>Mehrfamilienhaus</option>
+      <option>Reihenhaus</option>
+      <option>Doppelhaushälfte</option>
+      <option>Sonstiges</option>
+    </select>
+    <label>Baujahr Gebäude</label><input id="baujahr">
+
+    <h2>2. Energieverbrauch</h2>
+    <label>Heizenergieverbrauch pro Jahr</label><input id="verbrauch" placeholder="z. B. 3.000 l Öl / 28.000 kWh Gas">
+    <label>Aktuelles Heizsystem</label>
+    <select id="heizsystem">
+      <option></option>
+      <option>Gasheizung</option>
+      <option>Ölheizung</option>
+      <option>Pelletheizung</option>
+      <option>Wärmepumpe</option>
+      <option>Fernwärme</option>
+      <option>Sonstiges</option>
+    </select>
+    <label>Baujahr Heizung</label><input id="baujahr_heizung">
+
+    <h2>3. Gebäude</h2>
+    <label>Wohnfläche in m²</label><input id="wohnflaeche">
+    <label>Wohneinheiten</label><input id="wohneinheiten">
+    <label>Bewohner</label><input id="bewohner">
+    <label>Dämmzustand</label>
+    <select id="daemmung">
+      <option></option>
+      <option>Unsaniert</option>
+      <option>Teilweise saniert</option>
+      <option>Gut saniert</option>
+      <option>Unklar</option>
+    </select>
+    <label>Keller vorhanden?</label>
+    <select id="keller">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Teilweise</option>
+      <option>Unklar</option>
+    </select>
+
+    <h2>4. Heizflächen / Referenz-Heizkörper</h2>
+    <label>Heizflächen</label>
+    <select id="heizflaechen">
+      <option></option>
+      <option>Nur Heizkörper</option>
+      <option>Nur Fußbodenheizung</option>
+      <option>Gemischt</option>
+      <option>Unklar</option>
+    </select>
+    <label>Referenz-Heizkörper Wohnzimmer</label><input id="hk_wohnzimmer" placeholder="Maße / Typ / Bemerkung">
+    <label>Referenz-Heizkörper Bad</label><input id="hk_bad" placeholder="Maße / Typ / Bemerkung">
+    <label>Weitere auffällige Heizkörper</label><textarea id="hk_sonstige"></textarea>
+
+    <h2>5. Hydraulik & Technik</h2>
+    <label>Pumpentyp</label><input id="pumpentyp">
+    <label>Pufferspeicher vorhanden?</label>
+    <select id="pufferspeicher">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Unklar</option>
+    </select>
+    <label>Warmwasserspeicher vorhanden?</label>
+    <select id="ww_speicher">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Unklar</option>
+    </select>
+    <label>Heizlastberechnung vorhanden?</label>
+    <select id="heizlast">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Unklar</option>
+    </select>
+    <label>Hydraulischer Abgleich vorhanden?</label>
+    <select id="hydraulischer_abgleich">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Unklar</option>
+    </select>
+
+    <h2>6. Heizraum / Technikraum</h2>
+    <label>Raumgröße</label><input id="raumgroesse">
+    <label>Raumhöhe</label><input id="raumhoehe">
+    <label>Einbringmaße / Zugang</label><input id="einbringmasse">
+
+    <h2>7. Außengerät</h2>
+    <label>Möglicher Standort Außengerät</label><textarea id="aussenstandort"></textarea>
+    <label>Abstand zu Fenstern / Nachbarn</label><input id="abstand_fenster">
+    <label>Schallreflexion auffällig?</label>
+    <select id="schall">
+      <option></option>
+      <option>Nein</option>
+      <option>Ja</option>
+      <option>Unklar</option>
+    </select>
+    <label>Fundament möglich?</label>
+    <select id="fundament">
+      <option></option>
+      <option>Ja</option>
+      <option>Nein</option>
+      <option>Unklar</option>
+    </select>
+
+    <h2>8. Fotos / Unterlagen</h2>
+    <div class="hinweis">
+      Bitte Fotos machen von: Heizgerät, Typenschild, Speicher, Heizkörpern, Technikraum, Zählerschrank, Außenstandort und Leitungswegen.
+    </div>
+    <label>Welche Fotos wurden gemacht?</label><textarea id="fotos"></textarea>
+    <label>Vorhandene Unterlagen</label><textarea id="unterlagen" placeholder="z. B. Schornsteinfegerprotokoll, Verbrauchsabrechnung, Grundriss, Heizlast"></textarea>
+
+    <h2>9. Sonstige Notizen</h2>
+    <textarea id="notizen"></textarea>
+
+    <button onclick="exportieren()">Daten als Datei herunterladen</button>
+  </div>
+
+  <script>
+    function exportieren() {
+      const felder = document.querySelectorAll("input, select, textarea");
+      let text = "Wärmepumpen-Checkliste Altbau\\n";
+      text += "================================\\n\\n";
+
+      felder.forEach(feld => {
+        const label = feld.previousElementSibling ? feld.previousElementSibling.innerText : feld.id;
+        text += label + ": " + feld.value + "\\n";
+      });
+
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      const name = document.getElementById("name").value || "kunde";
+
+      link.href = URL.createObjectURL(blob);
+      link.download = "waermepumpe-checkliste-" + name + ".txt";
+      link.click();
+    }
+  </script>
+</body>
+</html>
