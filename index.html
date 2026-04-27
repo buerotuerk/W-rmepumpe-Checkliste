@@ -1,232 +1,547 @@
-<!-- test -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Wärmepumpen-Checkliste Altbau</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wärmepumpen-Checkliste Altbau</title>
 
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
-    }
+<style>
+:root{
+  --green:#009681;
+  --green-dark:#007f6e;
+  --dark:#1f2937;
+  --muted:#6b7280;
+  --bg:#f4f7f8;
+  --border:#d9e2e4;
+  --danger:#ef4444;
+}
 
-    h1 {
-      margin-top: 0;
-    }
+*{box-sizing:border-box}
 
-    h2 {
-      margin-top: 30px;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 6px;
-    }
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--dark);
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-top: 14px;
-    }
+.wrapper{
+  max-width:1220px;
+  margin:auto;
+  padding:24px;
+}
 
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 4px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
-    }
+.header{
+  display:flex;
+  align-items:center;
+  gap:40px;
+  margin-bottom:26px;
+  background:white;
+  border-radius:16px;
+  padding:14px 20px;
+  box-shadow:0 3px 12px rgba(0,0,0,.04);
+}
 
-    textarea {
-      min-height: 90px;
-    }
+.logo{
+  width:380px;
+  max-width:40%;
+  height:auto;
+  display:block;
+}
 
-    button {
-      margin-top: 30px;
-      padding: 14px 22px;
-      background: #111827;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+.headerText h1{
+  font-size:34px;
+  margin:0 0 14px 0;
+  line-height:1.15;
+}
 
-    .hinweis {
-      background: #eef2ff;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
-  </style>
+.subtitle{
+  margin:0;
+  color:#4b5563;
+  font-size:16px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:24px;
+}
+
+.card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:24px;
+  margin-bottom:22px;
+  box-shadow:0 3px 10px rgba(0,0,0,.04);
+}
+
+h2{
+  color:var(--green);
+  margin:0 0 18px 0;
+  font-size:22px;
+}
+
+h3{
+  margin:18px 0 12px 0;
+  font-size:17px;
+}
+
+.formgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 24px;
+}
+
+label{
+  font-weight:bold;
+  display:block;
+  margin-bottom:7px;
+  font-size:14px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #cfd8dc;
+  border-radius:8px;
+  font-size:16px;
+  background:white;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.photoBox{
+  border:2px dashed #8acbc2;
+  padding:22px;
+  border-radius:12px;
+  text-align:center;
+  background:#f6fffd;
+  margin-top:10px;
+}
+
+.preview{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+
+.previewItem{
+  position:relative;
+}
+
+.preview img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid #ddd;
+  display:block;
+}
+
+.deleteBtn{
+  position:absolute;
+  right:6px;
+  bottom:6px;
+  background:white;
+  color:var(--danger);
+  border:1px solid #eee;
+  padding:5px 7px;
+  font-size:14px;
+  margin:0;
+}
+
+button{
+  background:var(--green);
+  color:white;
+  border:none;
+  padding:13px 18px;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:8px;
+  font-weight:bold;
+}
+
+button:hover{
+  background:var(--green-dark);
+}
+
+button.secondary{
+  background:#374151;
+}
+
+button.light{
+  background:white;
+  color:var(--green);
+  border:1px solid var(--green);
+  padding:9px 12px;
+  font-size:14px;
+}
+
+.actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.footer{
+  background:var(--green);
+  color:white;
+  text-align:center;
+  padding:14px;
+  margin-top:24px;
+  font-size:15px;
+}
+
+.small{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:8px;
+}
+
+@media(max-width:850px){
+  .wrapper{padding:14px}
+  .grid,.formgrid{grid-template-columns:1fr}
+  .header{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:16px;
+  }
+  .logo{
+    width:100%;
+    max-width:430px;
+  }
+  .headerText h1{
+    font-size:27px;
+  }
+}
+
+@media print{
+  button,input[type=file],.photoBox{display:none!important}
+  body{background:white}
+  .wrapper{max-width:none;padding:0}
+  .header,.card{box-shadow:none}
+  .grid{display:block}
+  .card{page-break-inside:avoid}
+  .footer{margin-top:10px}
+}
+</style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>Wärmepumpen-Checkliste Altbau</h1>
-    <p>Vor-Ort-Erfassung durch Elektropartner zur Angebotserstellung.</p>
 
-    <h2>1. Kundendaten</h2>
-    <label>Name</label><input id="name">
-    <label>Adresse</label><input id="adresse">
-    <label>Telefon</label><input id="telefon">
-    <label>E-Mail</label><input id="email">
-    <label>Gebäudetyp</label>
-    <select id="gebaeudetyp">
-      <option></option>
-      <option>Einfamilienhaus</option>
-      <option>Zweifamilienhaus</option>
-      <option>Mehrfamilienhaus</option>
-      <option>Reihenhaus</option>
-      <option>Doppelhaushälfte</option>
-      <option>Sonstiges</option>
-    </select>
-    <label>Baujahr Gebäude</label><input id="baujahr">
+<div class="wrapper">
 
-    <h2>2. Energieverbrauch</h2>
-    <label>Heizenergieverbrauch pro Jahr</label><input id="verbrauch" placeholder="z. B. 3.000 l Öl / 28.000 kWh Gas">
-    <label>Aktuelles Heizsystem</label>
-    <select id="heizsystem">
-      <option></option>
-      <option>Gasheizung</option>
-      <option>Ölheizung</option>
-      <option>Pelletheizung</option>
-      <option>Wärmepumpe</option>
-      <option>Fernwärme</option>
-      <option>Sonstiges</option>
-    </select>
-    <label>Baujahr Heizung</label><input id="baujahr_heizung">
-
-    <h2>3. Gebäude</h2>
-    <label>Wohnfläche in m²</label><input id="wohnflaeche">
-    <label>Wohneinheiten</label><input id="wohneinheiten">
-    <label>Bewohner</label><input id="bewohner">
-    <label>Dämmzustand</label>
-    <select id="daemmung">
-      <option></option>
-      <option>Unsaniert</option>
-      <option>Teilweise saniert</option>
-      <option>Gut saniert</option>
-      <option>Unklar</option>
-    </select>
-    <label>Keller vorhanden?</label>
-    <select id="keller">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Teilweise</option>
-      <option>Unklar</option>
-    </select>
-
-    <h2>4. Heizflächen / Referenz-Heizkörper</h2>
-    <label>Heizflächen</label>
-    <select id="heizflaechen">
-      <option></option>
-      <option>Nur Heizkörper</option>
-      <option>Nur Fußbodenheizung</option>
-      <option>Gemischt</option>
-      <option>Unklar</option>
-    </select>
-    <label>Referenz-Heizkörper Wohnzimmer</label><input id="hk_wohnzimmer" placeholder="Maße / Typ / Bemerkung">
-    <label>Referenz-Heizkörper Bad</label><input id="hk_bad" placeholder="Maße / Typ / Bemerkung">
-    <label>Weitere auffällige Heizkörper</label><textarea id="hk_sonstige"></textarea>
-
-    <h2>5. Hydraulik & Technik</h2>
-    <label>Pumpentyp</label><input id="pumpentyp">
-    <label>Pufferspeicher vorhanden?</label>
-    <select id="pufferspeicher">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Unklar</option>
-    </select>
-    <label>Warmwasserspeicher vorhanden?</label>
-    <select id="ww_speicher">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Unklar</option>
-    </select>
-    <label>Heizlastberechnung vorhanden?</label>
-    <select id="heizlast">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Unklar</option>
-    </select>
-    <label>Hydraulischer Abgleich vorhanden?</label>
-    <select id="hydraulischer_abgleich">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Unklar</option>
-    </select>
-
-    <h2>6. Heizraum / Technikraum</h2>
-    <label>Raumgröße</label><input id="raumgroesse">
-    <label>Raumhöhe</label><input id="raumhoehe">
-    <label>Einbringmaße / Zugang</label><input id="einbringmasse">
-
-    <h2>7. Außengerät</h2>
-    <label>Möglicher Standort Außengerät</label><textarea id="aussenstandort"></textarea>
-    <label>Abstand zu Fenstern / Nachbarn</label><input id="abstand_fenster">
-    <label>Schallreflexion auffällig?</label>
-    <select id="schall">
-      <option></option>
-      <option>Nein</option>
-      <option>Ja</option>
-      <option>Unklar</option>
-    </select>
-    <label>Fundament möglich?</label>
-    <select id="fundament">
-      <option></option>
-      <option>Ja</option>
-      <option>Nein</option>
-      <option>Unklar</option>
-    </select>
-
-    <h2>8. Fotos / Unterlagen</h2>
-    <div class="hinweis">
-      Bitte Fotos machen von: Heizgerät, Typenschild, Speicher, Heizkörpern, Technikraum, Zählerschrank, Außenstandort und Leitungswegen.
+  <div class="header">
+    <img src="logo.jpg" class="logo" alt="Michael Türk Sanitär Heizung Umwelttechnik GmbH Logo">
+    <div class="headerText">
+      <h1>Wärmepumpen-Checkliste Altbau</h1>
+      <p class="subtitle">Vor-Ort-Erfassung durch Elektropartner zur Angebotserstellung.</p>
     </div>
-    <label>Welche Fotos wurden gemacht?</label><textarea id="fotos"></textarea>
-    <label>Vorhandene Unterlagen</label><textarea id="unterlagen" placeholder="z. B. Schornsteinfegerprotokoll, Verbrauchsabrechnung, Grundriss, Heizlast"></textarea>
-
-    <h2>9. Sonstige Notizen</h2>
-    <textarea id="notizen"></textarea>
-
-    <button onclick="exportieren()">Daten als Datei herunterladen</button>
   </div>
 
-  <script>
-    function exportieren() {
-      const felder = document.querySelectorAll("input, select, textarea");
-      let text = "Wärmepumpen-Checkliste Altbau\\n";
-      text += "================================\\n\\n";
+  <div class="grid">
 
-      felder.forEach(feld => {
-        const label = feld.previousElementSibling ? feld.previousElementSibling.innerText : feld.id;
-        text += label + ": " + feld.value + "\\n";
-      });
+    <main>
 
-      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-      const link = document.createElement("a");
-      const name = document.getElementById("name").value || "kunde";
+      <div class="card">
+        <h2>1. Kundendaten</h2>
+        <div class="formgrid">
+          <div>
+            <label>Name</label>
+            <input id="name" placeholder="Ihr Name">
+          </div>
+          <div>
+            <label>Adresse</label>
+            <input id="adresse" placeholder="Ihre Adresse">
+          </div>
+          <div>
+            <label>Telefon</label>
+            <input id="telefon" placeholder="Ihre Telefonnummer">
+          </div>
+          <div>
+            <label>E-Mail</label>
+            <input id="email" placeholder="Ihre E-Mail-Adresse">
+          </div>
+          <div>
+            <label>Gebäudetyp</label>
+            <select id="gebaeudetyp">
+              <option value="">Bitte auswählen</option>
+              <option>Einfamilienhaus</option>
+              <option>Zweifamilienhaus</option>
+              <option>Mehrfamilienhaus</option>
+              <option>Reihenhaus</option>
+              <option>Doppelhaushälfte</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+          <div>
+            <label>Baujahr Gebäude</label>
+            <input id="baujahr_gebaeude" placeholder="z. B. 1990">
+          </div>
+        </div>
+      </div>
 
-      link.href = URL.createObjectURL(blob);
-      link.download = "waermepumpe-checkliste-" + name + ".txt";
-      link.click();
+      <div class="card">
+        <h2>2. Energieverbrauch / aktuelle Heizung</h2>
+        <div class="formgrid">
+          <div>
+            <label>Heizenergieverbrauch pro Jahr</label>
+            <input id="verbrauch" placeholder="z. B. 3.000 l Öl / 28.000 kWh Gas">
+          </div>
+          <div>
+            <label>Aktuelles Heizsystem</label>
+            <select id="heizsystem">
+              <option value="">Bitte auswählen</option>
+              <option>Gasheizung</option>
+              <option>Ölheizung</option>
+              <option>Pelletheizung</option>
+              <option>Wärmepumpe</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+          <div>
+            <label>Baujahr Heizung</label>
+            <input id="baujahr_heizung" placeholder="z. B. 2005">
+          </div>
+          <div>
+            <label>Foto aktuelle Heizung / Pumpe</label>
+            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'pumpePreview')">
+            <div id="pumpePreview" class="preview"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>3. Gebäude</h2>
+        <div class="formgrid">
+          <div>
+            <label>Wohnfläche ca. in m²</label>
+            <input id="wohnflaeche" placeholder="z. B. 140">
+          </div>
+          <div>
+            <label>Anzahl Personen im Haushalt</label>
+            <input id="personen" placeholder="z. B. 4">
+          </div>
+          <div>
+            <label>Wohneinheiten</label>
+            <input id="wohneinheiten" placeholder="z. B. 1">
+          </div>
+          <div>
+            <label>Dämmzustand</label>
+            <select id="daemmung">
+              <option value="">Bitte auswählen</option>
+              <option>Unsaniert</option>
+              <option>Teilweise saniert</option>
+              <option>Gut saniert</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>4. Referenz-Heizkörper</h2>
+
+        <h3>Heizkörper 1</h3>
+        <div class="formgrid">
+          <div>
+            <label>Raum</label>
+            <input id="hk1_raum" placeholder="z. B. Wohnzimmer">
+          </div>
+          <div>
+            <label>Größe / Typ</label>
+            <input id="hk1_groesse" placeholder="z. B. 100 x 60 Typ 22">
+            <button class="light" onclick="dictate('hk1_groesse')">🎙️ Diktieren</button>
+          </div>
+          <div>
+            <label>Foto Heizkörper 1</label>
+            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk1Preview')">
+            <div id="hk1Preview" class="preview"></div>
+          </div>
+          <div>
+            <label>Bemerkung</label>
+            <textarea id="hk1_bemerkung"></textarea>
+          </div>
+        </div>
+
+        <h3>Heizkörper 2</h3>
+        <div class="formgrid">
+          <div>
+            <label>Raum</label>
+            <input id="hk2_raum" placeholder="z. B. Schlafzimmer">
+          </div>
+          <div>
+            <label>Größe / Typ</label>
+            <input id="hk2_groesse" placeholder="z. B. 80 x 60 Typ 22">
+            <button class="light" onclick="dictate('hk2_groesse')">🎙️ Diktieren</button>
+          </div>
+          <div>
+            <label>Foto Heizkörper 2</label>
+            <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk2Preview')">
+            <div id="hk2Preview" class="preview"></div>
+          </div>
+          <div>
+            <label>Bemerkung</label>
+            <textarea id="hk2_bemerkung"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>5. Standort Wärmepumpe / Außengerät</h2>
+        <div class="formgrid">
+          <div>
+            <label>Beschreibung Standort</label>
+            <textarea id="standort" placeholder="z. B. links neben Garage, Abstand zum Haus ca. 1 m"></textarea>
+          </div>
+          <div>
+            <label>Abstand Fenster / Nachbarn</label>
+            <input id="abstand" placeholder="z. B. 5 m zum Nachbarfenster">
+          </div>
+          <div>
+            <label>Fundament möglich?</label>
+            <select id="fundament">
+              <option value="">Bitte auswählen</option>
+              <option>Ja</option>
+              <option>Nein</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label>Schall / Reflexion auffällig?</label>
+            <select id="schall">
+              <option value="">Bitte auswählen</option>
+              <option>Nein</option>
+              <option>Ja</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+        </div>
+
+        <br>
+        <label>Fotos Standort Wärmepumpe</label>
+        <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'standortPreview')">
+        <div id="standortPreview" class="preview"></div>
+      </div>
+
+    </main>
+
+    <aside>
+
+      <div class="card">
+        <h2>6. Allgemeine Fotos</h2>
+        <p>Zählerschrank, Technikraum, Leitungswege, Typenschilder, Außenansicht usw.</p>
+        <div class="photoBox">
+          <strong>Fotos auswählen oder aufnehmen</strong>
+          <br><br>
+          <input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'allgemeinPreview')">
+          <p class="small">JPG / PNG – mehrere Fotos möglich</p>
+        </div>
+        <div id="allgemeinPreview" class="preview"></div>
+      </div>
+
+      <div class="card">
+        <h2>7. Notizen</h2>
+        <textarea id="notizen" placeholder="Weitere Hinweise, Besonderheiten oder offene Fragen..."></textarea>
+        <button class="light" onclick="dictate('notizen')">🎙️ Notiz diktieren</button>
+      </div>
+
+      <div class="card actions">
+        <h2>Ausgabe</h2>
+        <button onclick="window.print()">📄 PDF herunterladen / drucken</button>
+        <button class="secondary" onclick="mailSenden()">✉️ Per Mail vorbereiten</button>
+        <p class="small">Hinweis: Fotos werden beim Mail-Button nicht automatisch angehängt. Dafür bitte PDF erstellen oder Fotos separat mitsenden.</p>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<div class="footer">
+  🔒 Ihre Daten werden vertraulich behandelt und ausschließlich zur Angebotserstellung verwendet.
+</div>
+
+<script>
+function preview(input,targetId){
+  const target=document.getElementById(targetId);
+  target.innerHTML="";
+
+  Array.from(input.files).forEach(file=>{
+    const reader=new FileReader();
+
+    reader.onload=e=>{
+      const box=document.createElement("div");
+      box.className="previewItem";
+
+      const img=document.createElement("img");
+      img.src=e.target.result;
+
+      const btn=document.createElement("button");
+      btn.className="deleteBtn";
+      btn.innerHTML="🗑️";
+      btn.type="button";
+      btn.onclick=function(){
+        box.remove();
+      };
+
+      box.appendChild(img);
+      box.appendChild(btn);
+      target.appendChild(box);
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function dictate(fieldId){
+  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+    alert("Diktieren wird von diesem Browser nicht unterstützt. Nutzen Sie alternativ die Mikrofon-Taste der Handy-Tastatur.");
+    return;
+  }
+
+  const recognition=new SpeechRecognition();
+  recognition.lang="de-DE";
+  recognition.start();
+
+  recognition.onresult=function(event){
+    const text=event.results[0][0].transcript;
+    const field=document.getElementById(fieldId);
+    field.value=field.value ? field.value+" "+text : text;
+  };
+}
+
+function mailSenden(){
+  const felder=document.querySelectorAll("input:not([type=file]),select,textarea");
+  let text="Wärmepumpen-Checkliste Altbau\n\n";
+
+  felder.forEach(feld=>{
+    let label="";
+
+    if(feld.previousElementSibling && feld.previousElementSibling.tagName==="LABEL"){
+      label=feld.previousElementSibling.innerText;
+    }else{
+      label=feld.id;
     }
-  </script>
+
+    text+=label+": "+feld.value+"\n";
+  });
+
+  window.location.href=
+    "mailto:info@tuerk-sarstedt.de?subject="+
+    encodeURIComponent("Wärmepumpen-Checkliste")+
+    "&body="+
+    encodeURIComponent(text);
+}
+</script>
+
 </body>
 </html>
