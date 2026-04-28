@@ -393,22 +393,12 @@ button.light{
             <input id="vorlauftemperatur" placeholder="z. B. 55 °C">
           </div>
           <div>
-            <label>FBH-Verteiler vorhanden?</label>
-            <select id="fbh_verteiler">
-              <option value="">Bitte auswählen</option>
-              <option>Ja</option>
-              <option>Nein</option>
-              <option>Unklar</option>
-            </select>
+            <label>Fußbodenheizung Etage/Bereich</label>
+            <input id="fussbodenheizung_etage" placeholder="z. B. KG + EG, EG teilweise, nur Bad OG">
           </div>
           <div>
-            <label>Kreise einstellbar?</label>
-            <select id="kreise_einstellbar">
-              <option value="">Bitte auswählen</option>
-              <option>Ja</option>
-              <option>Nein</option>
-              <option>Unklar</option>
-            </select>
+            <label>Heizkörper Etage/Bereich</label>
+            <input id="heizkoerper_etage" placeholder="z. B. OG + DG, Schlafräume OG">
           </div>
           <div>
             <label>Raumregler vorhanden?</label>
@@ -787,10 +777,36 @@ function datenLoeschen(){
   }
 
   localStorage.removeItem("wp_checkliste_v2");
+  localStorage.removeItem("wp_checkliste");
+  localStorage.removeItem("waermepumpe_checkliste");
+
+  Object.keys(localStorage).forEach(key=>{
+    const klein=key.toLowerCase();
+    if(
+      klein.includes("wp") ||
+      klein.includes("waermepumpe") ||
+      klein.includes("wärmepumpe") ||
+      klein.includes("checkliste")
+    ){
+      localStorage.removeItem(key);
+    }
+  });
 
   const felder=document.querySelectorAll("input:not([type=file]), select, textarea");
   felder.forEach(feld=>{
     feld.value="";
+    feld.removeAttribute("value");
+  });
+
+  const selects=document.querySelectorAll("select");
+  selects.forEach(select=>{
+    select.selectedIndex=0;
+  });
+
+  const textareas=document.querySelectorAll("textarea");
+  textareas.forEach(textarea=>{
+    textarea.value="";
+    textarea.innerHTML="";
   });
 
   const fileInputs=document.querySelectorAll("input[type=file]");
@@ -807,7 +823,11 @@ function datenLoeschen(){
     photoStore[key]=[];
   });
 
-  alert("Gespeicherte Daten und aktuelle Eingaben wurden gelöscht ✅");
+  alert("Gespeicherte Daten, Eingaben und Fotos wurden gelöscht ✅");
+
+  setTimeout(function(){
+    window.location.reload();
+  },300);
 }
 
 function feldwert(id){
@@ -898,8 +918,8 @@ async function pdfErstellen(){
     ["Heizkörper vorhanden","heizkoerper_vorhanden"],
     ["Ventile voreinstellbar","ventile_voreinstellbar"],
     ["Vorlauftemperatur","vorlauftemperatur"],
-    ["FBH-Verteiler vorhanden","fbh_verteiler"],
-    ["Kreise einstellbar","kreise_einstellbar"],
+    ["Fußbodenheizung Etage/Bereich","fussbodenheizung_etage"],
+    ["Heizkörper Etage/Bereich","heizkoerper_etage"],
     ["Raumregler vorhanden","raumregler"],
     ["Systemtrennung FBH / Heizkörper","systemtrennung"]
   ],y);
