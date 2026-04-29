@@ -848,44 +848,60 @@ button.light{
         <p class="small">Grobe Vorabschätzung für die Angebotserstellung. Keine Heizlastberechnung nach DIN EN 12831.</p>
         <div class="formgrid">
           <div>
-            <label>Fenster erneuert?</label>
+            <label>Fenster Zustand</label>
             <select id="fenster_erneuert">
               <option value="">Bitte auswählen</option>
-              <option>Nein</option>
-              <option>Teilweise</option>
-              <option>Ja</option>
+              <option>Alt / nicht erneuert</option>
+              <option>Teilweise erneuert</option>
+              <option>2-fach modern</option>
+              <option>3-fach modern</option>
               <option>Unklar</option>
             </select>
           </div>
           <div>
-            <label>Dach / oberste Geschossdecke gedämmt?</label>
+            <label>Dach / oberste Geschossdecke Dämmzustand</label>
             <select id="dach_gedaemmt">
               <option value="">Bitte auswählen</option>
-              <option>Nein</option>
-              <option>Teilweise</option>
-              <option>Ja</option>
+              <option>Nicht gedämmt</option>
+              <option>Schwach gedämmt</option>
+              <option>Teilweise / mittel gedämmt</option>
+              <option>Gut gedämmt</option>
               <option>Unklar</option>
             </select>
           </div>
           <div>
-            <label>Fassade gedämmt?</label>
+            <label>Dämmstärke Dach, falls bekannt</label>
+            <input id="dach_daemmstaerke" placeholder="z. B. 12 cm Mineralwolle">
+          </div>
+          <div>
+            <label>Fassade Dämmzustand</label>
             <select id="fassade_gedaemmt">
               <option value="">Bitte auswählen</option>
-              <option>Nein</option>
-              <option>Teilweise</option>
-              <option>Ja</option>
+              <option>Nicht gedämmt</option>
+              <option>Schwach gedämmt</option>
+              <option>Teilweise / mittel gedämmt</option>
+              <option>Gut gedämmt</option>
               <option>Unklar</option>
             </select>
           </div>
           <div>
-            <label>Kellerdecke / Bodenplatte gedämmt?</label>
+            <label>Dämmstärke Fassade, falls bekannt</label>
+            <input id="fassade_daemmstaerke" placeholder="z. B. 10 cm WDVS">
+          </div>
+          <div>
+            <label>Kellerdecke / Bodenplatte Dämmzustand</label>
             <select id="kellerdecke_gedaemmt">
               <option value="">Bitte auswählen</option>
-              <option>Nein</option>
-              <option>Teilweise</option>
-              <option>Ja</option>
+              <option>Nicht gedämmt</option>
+              <option>Schwach gedämmt</option>
+              <option>Teilweise / mittel gedämmt</option>
+              <option>Gut gedämmt</option>
               <option>Unklar</option>
             </select>
+          </div>
+          <div>
+            <label>Dämmstärke Kellerdecke, falls bekannt</label>
+            <input id="kellerdecke_daemmstaerke" placeholder="z. B. 8 cm">
           </div>
         </div>
         <button onclick="heizlastBerechnen()">🔥 Heizlast überschlägig berechnen</button>
@@ -1685,10 +1701,13 @@ async function pdfErstellen(){
   ],y);
 
   y=addSection(doc,"10. Überschlag Heizlast",[
-    ["Fenster erneuert","fenster_erneuert"],
-    ["Dach gedämmt","dach_gedaemmt"],
-    ["Fassade gedämmt","fassade_gedaemmt"],
-    ["Kellerdecke gedämmt","kellerdecke_gedaemmt"],
+    ["Fenster Zustand","fenster_erneuert"],
+    ["Dach Dämmzustand","dach_gedaemmt"],
+    ["Dämmstärke Dach","dach_daemmstaerke"],
+    ["Fassade Dämmzustand","fassade_gedaemmt"],
+    ["Dämmstärke Fassade","fassade_daemmstaerke"],
+    ["Kellerdecke Dämmzustand","kellerdecke_gedaemmt"],
+    ["Dämmstärke Kellerdecke","kellerdecke_daemmstaerke"],
     ["Ergebnis Heizlast","heizlast_ergebnis"]
   ],y);
 
@@ -1826,11 +1845,30 @@ function heizlastBerechnen(){
   if(daemmung === "Teilweise saniert"){ wProM2 -= 5; }
   if(daemmung === "Gut saniert"){ wProM2 -= 20; }
 
-  [fenster,dach,fassade,kellerdecke].forEach(wert=>{
-    if(wert === "Ja"){ wProM2 -= 5; }
-    if(wert === "Teilweise"){ wProM2 -= 2; }
-    if(wert === "Nein"){ wProM2 += 2; }
+  if(fenster === "Alt / nicht erneuert"){ wProM2 += 6; }
+  if(fenster === "Teilweise erneuert"){ wProM2 -= 2; }
+  if(fenster === "2-fach modern"){ wProM2 -= 5; }
+  if(fenster === "3-fach modern"){ wProM2 -= 8; }
+
+  [dach,fassade,kellerdecke].forEach(wert=>{
+    if(wert === "Nicht gedämmt"){ wProM2 += 5; }
+    if(wert === "Schwach gedämmt"){ wProM2 -= 2; }
+    if(wert === "Teilweise / mittel gedämmt"){ wProM2 -= 6; }
+    if(wert === "Gut gedämmt"){ wProM2 -= 10; }
   });
+
+  const dachCm = zahlAusText(feldwert("dach_daemmstaerke"));
+  const fassadeCm = zahlAusText(feldwert("fassade_daemmstaerke"));
+  const kellerCm = zahlAusText(feldwert("kellerdecke_daemmstaerke"));
+
+  if(dachCm >= 16){ wProM2 -= 3; }
+  else if(dachCm >= 10){ wProM2 -= 1; }
+
+  if(fassadeCm >= 14){ wProM2 -= 3; }
+  else if(fassadeCm >= 8){ wProM2 -= 1; }
+
+  if(kellerCm >= 10){ wProM2 -= 2; }
+  else if(kellerCm >= 6){ wProM2 -= 1; }
 
   if(wProM2 < 35){ wProM2 = 35; }
   if(wProM2 > 140){ wProM2 = 140; }
