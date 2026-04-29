@@ -843,12 +843,61 @@ button.light{
         <div id="standortPreview" class="preview"></div>
       </div>
 
+      <div class="card">
+        <h2>10. Überschlag Heizlast</h2>
+        <p class="small">Grobe Vorabschätzung für die Angebotserstellung. Keine Heizlastberechnung nach DIN EN 12831.</p>
+        <div class="formgrid">
+          <div>
+            <label>Fenster erneuert?</label>
+            <select id="fenster_erneuert">
+              <option value="">Bitte auswählen</option>
+              <option>Nein</option>
+              <option>Teilweise</option>
+              <option>Ja</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label>Dach / oberste Geschossdecke gedämmt?</label>
+            <select id="dach_gedaemmt">
+              <option value="">Bitte auswählen</option>
+              <option>Nein</option>
+              <option>Teilweise</option>
+              <option>Ja</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label>Fassade gedämmt?</label>
+            <select id="fassade_gedaemmt">
+              <option value="">Bitte auswählen</option>
+              <option>Nein</option>
+              <option>Teilweise</option>
+              <option>Ja</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+          <div>
+            <label>Kellerdecke / Bodenplatte gedämmt?</label>
+            <select id="kellerdecke_gedaemmt">
+              <option value="">Bitte auswählen</option>
+              <option>Nein</option>
+              <option>Teilweise</option>
+              <option>Ja</option>
+              <option>Unklar</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="heizlastBerechnen()">🔥 Heizlast überschlägig berechnen</button>
+        <textarea id="heizlast_ergebnis" readonly placeholder="Hier erscheint die überschlägige Heizlast..."></textarea>
+      </div>
+
     </main>
 
     <aside>
 
       <div class="card">
-        <h2>10. Allgemeine Fotos</h2>
+        <h2>11. Allgemeine Fotos</h2>
         <p>Zählerschrank, Technikraum, Leitungswege, Typenschilder, Außenansicht usw.</p>
         <div class="photoBox">
           <strong>Fotos auswählen oder aufnehmen</strong>
@@ -1131,7 +1180,14 @@ button.light{
       </div>
 
       <div class="card">
-        <h2>5. Notizen Elektro / PV</h2>
+        <h2>5. PV-Potenzial überschlägig</h2>
+        <p class="small">Grobe Vorabschätzung aus Dachfläche, Ausrichtung und Verschattung.</p>
+        <button class="orange" onclick="pvBerechnen()">☀️ PV-Potenzial berechnen</button>
+        <textarea id="pv_ergebnis" readonly placeholder="Hier erscheint das überschlägige PV-Potenzial..."></textarea>
+      </div>
+
+      <div class="card">
+        <h2>6. Notizen Elektro / PV</h2>
         <textarea id="elektro_notizen" placeholder="Weitere Hinweise vom Elektriker..."></textarea>
         <button class="light" onclick="dictate('elektro_notizen')">🎙️ Notiz diktieren</button>
       </div>
@@ -1628,6 +1684,14 @@ async function pdfErstellen(){
     ["Leitungsweg möglich","leitungsweg"]
   ],y);
 
+  y=addSection(doc,"10. Überschlag Heizlast",[
+    ["Fenster erneuert","fenster_erneuert"],
+    ["Dach gedämmt","dach_gedaemmt"],
+    ["Fassade gedämmt","fassade_gedaemmt"],
+    ["Kellerdecke gedämmt","kellerdecke_gedaemmt"],
+    ["Ergebnis Heizlast","heizlast_ergebnis"]
+  ],y);
+
   y=addSection(doc,"11. Notizen",[
     ["Notizen","notizen"]
   ],y);
@@ -1708,7 +1772,11 @@ async function pdfElektroErstellen(){
     ["Tiefbau Grünfläche","tiefbau_gruenflaeche"]
   ],y);
 
-  y=addSection(doc,"5. Notizen Elektro / PV",[
+  y=addSection(doc,"5. PV-Potenzial überschlägig",[
+    ["Ergebnis PV-Potenzial","pv_ergebnis"]
+  ],y);
+
+  y=addSection(doc,"6. Notizen Elektro / PV",[
     ["Notizen","elektro_notizen"]
   ],y);
 
@@ -1721,6 +1789,161 @@ async function pdfElektroErstellen(){
   const name = feldwert("el_name") || feldwert("name") || "Kunde";
   const cleanName = name.replace(/[^a-z0-9äöüß\- ]/gi,"").replace(/\s+/g,"_");
   doc.save("Elektro_PV_Checkliste_"+cleanName+".pdf");
+}
+
+function zahlAusText(text){
+  if(!text){ return 0; }
+  const match = String(text).replace(",",".").match(/[0-9]+(\.[0-9]+)?/);
+  return match ? parseFloat(match[0]) : 0;
+}
+
+function heizlastBerechnen(){
+  const flaeche = zahlAusText(feldwert("beheizte_wohnflaeche")) || zahlAusText(feldwert("wohnflaeche"));
+  const baujahr = zahlAusText(feldwert("baujahr_gebaeude"));
+  const daemmung = feldwert("daemmung");
+  const fenster = feldwert("fenster_erneuert");
+  const dach = feldwert("dach_gedaemmt");
+  const fassade = feldwert("fassade_gedaemmt");
+  const kellerdecke = feldwert("kellerdecke_gedaemmt");
+  const verbrauch = zahlAusText(feldwert("verbrauch"));
+
+  if(!flaeche){
+    alert("Bitte zuerst Wohnfläche oder beheizte Wohnfläche eintragen.");
+    return;
+  }
+
+  let wProM2 = 90;
+
+  if(baujahr){
+    if(baujahr < 1978){ wProM2 = 115; }
+    else if(baujahr < 1995){ wProM2 = 90; }
+    else if(baujahr < 2002){ wProM2 = 75; }
+    else if(baujahr < 2016){ wProM2 = 60; }
+    else { wProM2 = 45; }
+  }
+
+  if(daemmung === "Unsaniert"){ wProM2 += 15; }
+  if(daemmung === "Teilweise saniert"){ wProM2 -= 5; }
+  if(daemmung === "Gut saniert"){ wProM2 -= 20; }
+
+  [fenster,dach,fassade,kellerdecke].forEach(wert=>{
+    if(wert === "Ja"){ wProM2 -= 5; }
+    if(wert === "Teilweise"){ wProM2 -= 2; }
+    if(wert === "Nein"){ wProM2 += 2; }
+  });
+
+  if(wProM2 < 35){ wProM2 = 35; }
+  if(wProM2 > 140){ wProM2 = 140; }
+
+  let heizlastFlaeche = flaeche * wProM2 / 1000;
+  let heizlastVerbrauch = 0;
+
+  if(verbrauch){
+    const text = feldwert("verbrauch").toLowerCase();
+    let jahresKwh = verbrauch;
+    if(text.includes("öl") || text.includes("l")){
+      jahresKwh = verbrauch * 10;
+    }
+    heizlastVerbrauch = jahresKwh / 2200;
+  }
+
+  let ergebnis = heizlastFlaeche;
+  let methode = "nach Baujahr, Fläche und Sanierungszustand";
+
+  if(heizlastVerbrauch > 0){
+    ergebnis = (heizlastFlaeche + heizlastVerbrauch) / 2;
+    methode = "Mittelwert aus Flächenansatz und Verbrauchsansatz";
+  }
+
+  const gerundet = Math.round(ergebnis * 10) / 10;
+  const min = Math.round(gerundet * 0.85 * 10) / 10;
+  const max = Math.round(gerundet * 1.15 * 10) / 10;
+
+  let bewertung = "Wärmepumpe grundsätzlich prüfbar.";
+  if(gerundet > 14){ bewertung = "Erhöhte Heizlast: Auslegung, Heizflächen und Vorlauftemperatur genau prüfen."; }
+  if(feldwert("vorlauftemperatur") && zahlAusText(feldwert("vorlauftemperatur")) > 55){
+    bewertung += " Vorlauftemperatur kritisch: Heizkörper / hydraulischen Abgleich prüfen.";
+  }
+
+  const text =
+    "Überschlägige Heizlast: ca. " + gerundet + " kW
+" +
+    "Plausibler Bereich: ca. " + min + " bis " + max + " kW
+" +
+    "Ansatz: " + methode + "
+" +
+    "Angenommener Kennwert: ca. " + Math.round(wProM2) + " W/m²
+" +
+    "Bewertung: " + bewertung + "
+
+" +
+    "Hinweis: Nur Vorabschätzung für die Angebotserstellung. Keine Heizlastberechnung nach DIN EN 12831.";
+
+  const feld = document.getElementById("heizlast_ergebnis");
+  if(feld){ feld.value = text; }
+  speichern();
+}
+
+function pvBerechnen(){
+  const dach = zahlAusText(feldwert("dachflaeche"));
+  const ausrichtung = feldwert("dachausrichtung").toLowerCase();
+  const verschattung = feldwert("verschattung");
+
+  if(!dach){
+    alert("Bitte zuerst die Dachfläche eintragen.");
+    return;
+  }
+
+  let faktor = 1.0;
+  let hinweise = [];
+
+  if(ausrichtung.includes("süd")){
+    faktor *= 1.0;
+    hinweise.push("Südausrichtung: sehr gut geeignet.");
+  }else if(ausrichtung.includes("ost") || ausrichtung.includes("west")){
+    faktor *= 0.9;
+    hinweise.push("Ost-/West-Ausrichtung: gut geeignet, etwas geringerer Ertrag als Süd.");
+  }else if(ausrichtung.includes("nord")){
+    faktor *= 0.6;
+    hinweise.push("Nordausrichtung: kritisch prüfen.");
+  }else{
+    hinweise.push("Ausrichtung unklar: konservativer Richtwert verwenden.");
+  }
+
+  if(verschattung === "Ja"){
+    faktor *= 0.75;
+    hinweise.push("Verschattung vorhanden: deutlicher Abschlag berücksichtigt.");
+  }else if(verschattung === "Teilweise"){
+    faktor *= 0.88;
+    hinweise.push("Teilweise Verschattung: Abschlag berücksichtigt.");
+  }else if(verschattung === "Nein"){
+    hinweise.push("Keine erkennbare Verschattung angegeben.");
+  }
+
+  const kwpRoh = dach / 6;
+  const kwp = Math.round(kwpRoh * faktor * 10) / 10;
+  const min = Math.round((dach / 7) * faktor * 10) / 10;
+  const max = Math.round((dach / 5) * faktor * 10) / 10;
+
+  const text =
+    "Überschlägiges PV-Potenzial: ca. " + kwp + " kWp
+" +
+    "Plausibler Bereich: ca. " + min + " bis " + max + " kWp
+" +
+    "Ansatz: ca. 5 bis 7 m² Dachfläche pro 1 kWp, Mittelwert 6 m²/kWp.
+" +
+    "Dachfläche: " + dach + " m²
+" +
+    "Korrekturfaktor aus Ausrichtung/Verschattung: ca. " + Math.round(faktor*100) + " %
+" +
+    "Hinweise: " + hinweise.join(" ") + "
+
+" +
+    "Hinweis: Nur grobe Vorabschätzung. Belegung, Statik, Randabstände, Gauben, Dachfenster und Netzanschluss müssen separat geprüft werden.";
+
+  const feld = document.getElementById("pv_ergebnis");
+  if(feld){ feld.value = text; }
+  speichern();
 }
 
 function mailSenden(){
