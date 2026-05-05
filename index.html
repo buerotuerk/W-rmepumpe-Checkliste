@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wärmepumpe Checkliste</title>
+  <style>
+    :root{
+      --bg:#f4f7f8;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#d9e2e4;
+      --green:#0f9f8f;
+      --green-dark:#08796d;
+      --danger:#b91c1c;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    header{
+      background:#ffffff;
+      border-bottom:1px solid var(--border);
+      padding:18px 16px;
+      text-align:center;
+      position:sticky;
+      top:0;
+      z-index:5;
+    }
+    header h1{margin:0;color:var(--green);font-size:26px}
+    header p{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .wrapper{max-width:980px;margin:0 auto;padding:18px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:18px;
+      margin:18px 0;
+      box-shadow:0 2px 10px rgba(0,0,0,.04);
+    }
+    h2{margin:0 0 14px;color:var(--green);font-size:22px}
+    h3{margin:18px 0 10px;font-size:18px}
+    .small{font-size:13px;color:var(--muted);margin-top:-8px;margin-bottom:14px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+    label{font-weight:700;font-size:14px;display:block;margin-bottom:6px}
+    input,select,textarea{
+      width:100%;
+      padding:12px 13px;
+      border:1px solid #cfd8dc;
+      border-radius:8px;
+      font-size:16px;
+      background:#fff;
+      color:var(--text);
+    }
+    textarea{min-height:90px;resize:vertical}
+    input[type=file]{padding:10px;background:#fff}
+    .full{grid-column:1/-1}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    button{
+      border:0;
+      border-radius:8px;
+      padding:12px 16px;
+      background:var(--green);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      font-size:15px;
+    }
+    button.secondary{background:#334155}
+    button.danger{background:var(--danger)}
+    button:hover{filter:brightness(.95)}
+    .result{
+      margin-top:12px;
+      background:#f8fafc;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:12px;
+      white-space:pre-wrap;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:14px;
+    }
+    .hint{font-size:13px;color:var(--muted)}
+    footer{color:var(--muted);text-align:center;font-size:13px;padding:24px}
+    @media(max-width:760px){
+      .grid{grid-template-columns:1fr}
+      header h1{font-size:22px}
+      .wrapper{padding:12px}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Wärmepumpe Checkliste</h1>
+  <p>Projekt-Checkliste für Bestandsaufnahme, Hydraulik, Aufstellort und Elektro</p>
+</header>
+
+<main class="wrapper">
+
+  <section class="card">
+    <h2>1. Kundendaten</h2>
+    <div class="grid">
+      <div><label>Name</label><input id="name" placeholder="z. B. Max Mustermann"></div>
+      <div><label>Telefon</label><input id="telefon" placeholder="z. B. 0171 ..."></div>
+      <div><label>E-Mail</label><input id="email" placeholder="z. B. name@example.de"></div>
+      <div><label>Gebäudetyp</label><select id="gebaeudetyp"><option value="">Bitte auswählen</option><option>Einfamilienhaus</option><option>Zweifamilienhaus</option><option>Mehrfamilienhaus</option><option>Gewerbe</option></select></div>
+      <div class="full"><label>Adresse</label><input id="adresse" placeholder="Straße, PLZ Ort"></div>
+      <div><label>Baujahr Gebäude</label><input id="baujahr_gebaeude" placeholder="z. B. 1985"></div>
+      <div><label>Neubau / Bestand</label><select id="neubau_bestand"><option value="">Bitte auswählen</option><option>Bestand</option><option>Neubau</option><option>Sanierung</option></select></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Energieverbrauch / aktuelle Heizung</h2>
+    <div class="grid">
+      <div><label>Aktueller Energieträger</label><select id="energietraeger"><option value="">Bitte auswählen</option><option>Gas</option><option>Öl</option><option>Pellets</option><option>Strom</option><option>Fernwärme</option><option>Sonstiges</option></select></div>
+      <div><label>Verbrauch pro Jahr</label><input id="verbrauch_jahr" placeholder="z. B. 25.000 kWh oder 2.500 l Öl"></div>
+      <div><label>Alter Wärmeerzeuger</label><input id="alter_heizung" placeholder="z. B. 20 Jahre"></div>
+      <div><label>Vorlauftemperatur bekannt?</label><input id="vorlauftemperatur" placeholder="z. B. 55 °C"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Gebäude</h2>
+    <div class="grid">
+      <div><label>Wohnfläche</label><input id="wohnflaeche" placeholder="z. B. 160 m²"></div>
+      <div><label>Beheizte Fläche</label><input id="beheizte_flaeche" placeholder="z. B. 150 m²"></div>
+      <div><label>Anzahl Wohneinheiten</label><input id="wohneinheiten" placeholder="z. B. 1"></div>
+      <div><label>Anzahl Bewohner</label><input id="bewohner" placeholder="z. B. 4"></div>
+      <div><label>Keller vorhanden?</label><select id="keller"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option></select></div>
+      <div><label>Dämmzustand grob</label><select id="daemmung"><option value="">Bitte auswählen</option><option>Unsaniert</option><option>Teilweise saniert</option><option>Gut saniert</option><option>Neubau-Standard</option></select></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4. Warmwasser</h2>
+    <div class="grid">
+      <div><label>Warmwasser über Wärmepumpe?</label><select id="ww_waermepumpe"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Bisherige Warmwasserbereitung</label><input id="ww_bisher_heizung" placeholder="z. B. über Gastherme"></div>
+      <div><label>Anzahl Duschen</label><input id="anzahl_duschen" placeholder="z. B. 2"></div>
+      <div><label>Anzahl Badewannen</label><input id="anzahl_badewannen" placeholder="z. B. 1"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Heizsystem</h2>
+    <div class="grid">
+      <div><label>Fußbodenheizung vorhanden?</label><select id="fussbodenheizung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option></select></div>
+      <div><label>Heizkörper vorhanden?</label><select id="heizkoerper_vorhanden"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option></select></div>
+      <div><label>Ventile voreinstellbar?</label><select id="ventile_voreinstellbar"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Bekannte Vorlauftemperatur</label><input id="vl_temp" placeholder="z. B. 55 °C"></div>
+      <div class="full"><label>Fotos Heizsystem / Verteiler / Ventile</label><input id="fotos_heizsystem" type="file" accept="image/*" capture="environment" multiple></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>6. Referenz-Heizkörper</h2>
+    <p class="small">Bitte 2 bis 3 typische Heizkörper aufnehmen, z. B. größter Raum, kritischer Raum, Bad.</p>
+    <div class="grid">
+      <div><label>HK1 Raum</label><input id="hk1_raum" placeholder="z. B. Wohnzimmer"></div>
+      <div><label>HK1 Größe / Typ</label><input id="hk1_groesse" placeholder="z. B. 1200 x 600 Typ 22"></div>
+      <div><label>HK2 Raum</label><input id="hk2_raum" placeholder="z. B. Schlafzimmer"></div>
+      <div><label>HK2 Größe / Typ</label><input id="hk2_groesse" placeholder="z. B. 1000 x 600 Typ 22"></div>
+      <div><label>HK3 Raum</label><input id="hk3_raum" placeholder="z. B. Bad / Flur"></div>
+      <div><label>HK3 Größe / Typ</label><input id="hk3_groesse" placeholder="z. B. Handtuchheizkörper"></div>
+      <div class="full"><label>Fotos Heizkörper</label><input id="fotos_heizkoerper" type="file" accept="image/*" capture="environment" multiple></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>7. Hydraulik & Technik</h2>
+    <div class="grid">
+      <div><label>Pumpentyp / Heizungspumpe</label><input id="pumpentyp" placeholder="Hersteller / Typ / Leistung"></div>
+      <div><label>Rohrquerschnitt / Rohrdimension</label><input id="rohrquerschnitt" placeholder="z. B. CU 22, DN25, 28 mm"></div>
+      <div><label>Heizlast für Rohrprüfung in kW</label><input id="rohrcheck_heizlast" inputmode="decimal" placeholder="z. B. 8"></div>
+      <div><label>Rohrmaterial / Dimension</label><select id="rohrcheck_dimension"><option value="">Bitte auswählen</option><option value="15">15 mm / DN15</option><option value="18">18 mm</option><option value="22">22 mm / DN20</option><option value="28">28 mm / DN25</option><option value="35">35 mm / DN32</option></select></div>
+      <div><label>Spreizung</label><select id="rohrcheck_spreizung"><option value="">Bitte auswählen</option><option value="5">5 K</option><option value="7">7 K</option><option value="10">10 K</option></select></div>
+      <div class="row" style="align-self:end"><button type="button" onclick="rohrdimensionPruefen()">🟢 Rohrdimension prüfen</button></div>
+      <div><label>Pufferspeicher vorhanden?</label><select id="pufferspeicher"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Warmwasserspeicher vorhanden?</label><select id="warmwasserspeicher"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Heizlastberechnung vorhanden?</label><select id="heizlastberechnung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Hydraulischer Abgleich vorhanden?</label><select id="hydraulischer_abgleich"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div class="full"><label>Rohrprüfung Ergebnis</label><textarea id="rohrcheck_ergebnis" readonly></textarea></div>
+      <div class="full"><label>Fotos Pumpe / Speicher / Rohrleitungen / Typenschilder</label><input id="fotos_technik" type="file" accept="image/*" capture="environment" multiple></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. Aufstellort Wärmepumpe / Außengerät</h2>
+    <div class="grid">
+      <div><label>Beschreibung Standort</label><textarea id="standort" placeholder="z. B. links neben Garage"></textarea></div>
+      <div><label>Grenzabstand / Abstand Nachbar</label><input id="grenzabstand" placeholder="z. B. 3 m"></div>
+      <div><label>Abstand Fenster</label><input id="abstand_fenster" placeholder="z. B. 5 m"></div>
+      <div><label>Schallreflexion auffällig?</label><select id="schallreflexion"><option value="">Bitte auswählen</option><option>Nein</option><option>Ja, Wand / Ecke</option><option>Unklar</option></select></div>
+      <div><label>Fundament möglich?</label><select id="fundament"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Leitungsweg möglich?</label><select id="leitungsweg"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div class="full"><label>Fotos Aufstellort / Leitungsweg</label><input id="fotos_aufstellort" type="file" accept="image/*" capture="environment" multiple></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>9. Überschlag Heizlast</h2>
+    <p class="small">Grobe Vorabschätzung für die Angebotserstellung. Keine normgerechte Heizlastberechnung.</p>
+    <div class="grid">
+      <div><label>Fenster Zustand</label><select id="fenster_erneuert"><option value="">Bitte auswählen</option><option>Alt / nicht erneuert</option><option>Teilweise erneuert</option><option>Neu / gut</option></select></div>
+      <div><label>Dach / oberste Geschossdecke gedämmt?</label><select id="dach_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Teilweise</option><option>Gut gedämmt</option></select></div>
+      <div><label>Dämmstärke Dach, falls bekannt</label><input id="dach_daemmstaerke" placeholder="z. B. 12 cm Mineralwolle"></div>
+      <div><label>Fassade Dämmzustand</label><select id="fassade_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Teilweise</option><option>Gedämmt</option></select></div>
+      <div><label>Dämmstärke Fassade, falls bekannt</label><input id="fassade_daemmstaerke" placeholder="z. B. 10 cm WDVS"></div>
+      <div><label>Kellerdecke / Bodenplatte Dämmzustand</label><select id="kellerdecke_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Teilweise</option><option>Gedämmt</option></select></div>
+      <div><label>Dämmstärke Kellerdecke, falls bekannt</label><input id="kellerdecke_daemmstaerke" placeholder="z. B. 8 cm"></div>
+      <div class="row" style="align-self:end"><button type="button" onclick="heizlastBerechnen()">🔥 Heizlast überschlägig berechnen</button></div>
+      <div class="full"><label>Heizlast Ergebnis</label><textarea id="heizlast_ergebnis" readonly></textarea></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>10. Elektro-Checkliste</h2>
+    <div class="grid">
+      <div><label>Zählerschrank / Hausanschluss geeignet?</label><select id="el_zaehlerschrank"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Prüfen</option></select></div>
+      <div><label>Freier Zählerplatz vorhanden?</label><select id="el_freier_zaehlerplatz"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>PV-Anlage vorhanden?</label><select id="el_pv"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Geplant</option></select></div>
+      <div><label>Dachfläche geeignet?</label><select id="dachflaeche_geeignet"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div><label>Leitungsführung Gebäude</label><input id="leitungsfuehrung_gebaeude" placeholder="z. B. Keller bis Technikraum"></div>
+      <div><label>Kernbohrung erforderlich?</label><select id="kernbohrung_erforderlich"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+      <div class="full"><label>Elektro Notizen</label><textarea id="elektro_notizen"></textarea></div>
+      <div class="full"><label>Fotos Elektro / Zählerschrank</label><input id="fotos_elektro" type="file" accept="image/*" capture="environment" multiple></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>11. Notizen & Versand</h2>
+    <div class="grid">
+      <div class="full"><label>Weitere Notizen</label><textarea id="notizen"></textarea></div>
+      <div class="full row">
+        <button type="button" onclick="mailSenden(false)">Mail Checkliste erstellen</button>
+        <button type="button" class="secondary" onclick="mailSenden(true)">Mail nur Elektro erstellen</button>
+        <button type="button" class="danger" onclick="localStorage.clear(); location.reload()">Eingaben löschen</button>
+      </div>
+      <p class="hint full">Hinweis: Fotos können aus Sicherheitsgründen nicht automatisch an die Mail angehängt werden. Bitte nach dem Öffnen der Mail manuell anhängen.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>Version: saubere Komplettversion · GitHub Pages</footer>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const felder = Array.from(document.querySelectorAll('input, select, textarea')).filter(el => !el.readOnly && el.type !== 'file');
+
+  function wert(id){
+    const el = $(id);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  function labelVonFeld(id){
+    const el = $(id);
+    if(!el) return id;
+    const container = el.closest('div');
+    const label = container ? container.querySelector('label') : null;
+    return label ? label.textContent.trim() : id;
+  }
+
+  function dateinamen(id){
+    const el = $(id);
+    if(!el || !el.files || !el.files.length) return '';
+    return Array.from(el.files).map(f => f.name).join(', ');
+  }
+
+  function zeile(id){
+    return labelVonFeld(id) + ': ' + (wert(id) || '-') + '\n';
+  }
+
+  function mailAbschnitt(titel, ids){
+    let text = '\n==================== ' + titel + ' ====================\n';
+    ids.forEach(id => text += zeile(id));
+    return text;
+  }
+
+  function initAutosave(){
+    felder.forEach(el => {
+      const key = 'wpcheck_' + el.id;
+      if(localStorage.getItem(key) !== null) el.value = localStorage.getItem(key);
+      el.addEventListener('input', () => localStorage.setItem(key, el.value));
+      el.addEventListener('change', () => localStorage.setItem(key, el.value));
+    });
+  }
+
+  function rohrdimensionPruefen(){
+    const heizlast = parseFloat(wert('rohrcheck_heizlast').replace(',', '.'));
+    const dim = parseFloat(wert('rohrcheck_dimension'));
+    const spreizung = parseFloat(wert('rohrcheck_spreizung'));
+
+    if(!heizlast || !dim || !spreizung){
+      $('rohrcheck_ergebnis').value = 'Bitte Heizlast, Rohrdimension und Spreizung auswählen.';
+      return;
+    }
+
+    const volumenstrom = heizlast * 860 / spreizung; // Liter pro Stunde
+    const innendurchmesser = Math.max(dim - 2, 1); // grobe Näherung mm
+    const flaeche = Math.PI * Math.pow((innendurchmesser/1000)/2, 2);
+    const geschwindigkeit = (volumenstrom/1000/3600) / flaeche;
+
+    let bewertung = '';
+    if(geschwindigkeit <= 0.5) bewertung = 'grün: voraussichtlich unkritisch';
+    else if(geschwindigkeit <= 0.8) bewertung = 'gelb: prüfen, ggf. Druckverlust / Geräusche beachten';
+    else bewertung = 'rot: wahrscheinlich zu klein bzw. kritisch';
+
+    $('rohrcheck_ergebnis').value =
+      'Grobe Rohrprüfung\n' +
+      'Heizlast: ' + heizlast.toFixed(1) + ' kW\n' +
+      'Spreizung: ' + spreizung + ' K\n' +
+      'Volumenstrom: ca. ' + Math.round(volumenstrom) + ' l/h\n' +
+      'Rohrdimension: ' + dim + ' mm\n' +
+      'geschätzte Fließgeschwindigkeit: ca. ' + geschwindigkeit.toFixed(2).replace('.', ',') + ' m/s\n\n' +
+      'Bewertung: ' + bewertung + '\n\n' +
+      'Hinweis: Das ist nur eine grobe Vorprüfung und ersetzt keine Rohrnetzberechnung.';
+  }
+
+  function heizlastBerechnen(){
+    const flaeche = parseFloat((wert('beheizte_flaeche') || wert('wohnflaeche')).replace(',', '.'));
+    if(!flaeche){
+      $('heizlast_ergebnis').value = 'Bitte Wohnfläche oder beheizte Fläche eintragen.';
+      return;
+    }
+
+    let wqm = 90;
+    const bj = parseInt(wert('baujahr_gebaeude'), 10);
+
+    if(bj && bj >= 2002) wqm = 55;
+    else if(bj && bj >= 1995) wqm = 65;
+    else if(bj && bj >= 1984) wqm = 80;
+    else if(bj && bj < 1984) wqm = 100;
+
+    if(wert('daemmung') === 'Gut saniert') wqm -= 20;
+    if(wert('daemmung') === 'Teilweise saniert') wqm -= 10;
+    if(wert('daemmung') === 'Unsaniert') wqm += 10;
+    if(wert('fenster_erneuert') === 'Neu / gut') wqm -= 5;
+    if(wert('dach_gedaemmt') === 'Gut gedämmt') wqm -= 8;
+    if(wert('fassade_gedaemmt') === 'Gedämmt') wqm -= 12;
+    if(wert('kellerdecke_gedaemmt') === 'Gedämmt') wqm -= 5;
+
+    wqm = Math.max(35, Math.min(130, wqm));
+    const kw = flaeche * wqm / 1000;
+
+    $('heizlast_ergebnis').value =
+      'Überschlägige Heizlast\n' +
+      'Fläche: ' + flaeche + ' m²\n' +
+      'Ansatz: ca. ' + Math.round(wqm) + ' W/m²\n' +
+      'Ergebnis: ca. ' + kw.toFixed(1).replace('.', ',') + ' kW\n\n' +
+      'Hinweis: Nur grobe Vorabschätzung, keine Heizlastberechnung nach DIN EN 12831.';
+  }
+
+  function datenAlsText(nurElektro){
+    let text = (nurElektro ? 'ELEKTRO / PV-CHECKLISTE' : 'PROJEKT-CHECKLISTE WÄRMEPUMPE / ELEKTRO') + '\n';
+    text += 'Erstellt am: ' + new Date().toLocaleString('de-DE') + '\n';
+
+    if(!nurElektro){
+      text += mailAbschnitt('1. KUNDENDATEN', ['name','adresse','telefon','email','gebaeudetyp','neubau_bestand','baujahr_gebaeude']);
+      text += mailAbschnitt('2. ENERGIEVERBRAUCH / AKTUELLE HEIZUNG', ['energietraeger','verbrauch_jahr','alter_heizung','vorlauftemperatur']);
+      text += mailAbschnitt('3. GEBÄUDE', ['wohnflaeche','beheizte_flaeche','wohneinheiten','bewohner','keller','daemmung']);
+      text += mailAbschnitt('4. WARMWASSER', ['ww_waermepumpe','ww_bisher_heizung','anzahl_duschen','anzahl_badewannen']);
+      text += mailAbschnitt('5. HEIZSYSTEM', ['fussbodenheizung','heizkoerper_vorhanden','ventile_voreinstellbar','vl_temp']);
+      text += mailAbschnitt('6. REFERENZ-HEIZKÖRPER', ['hk1_raum','hk1_groesse','hk2_raum','hk2_groesse','hk3_raum','hk3_groesse']);
+      text += mailAbschnitt('7. HYDRAULIK & TECHNIK', ['pumpentyp','rohrquerschnitt','rohrcheck_heizlast','rohrcheck_dimension','rohrcheck_spreizung','pufferspeicher','warmwasserspeicher','heizlastberechnung','hydraulischer_abgleich','rohrcheck_ergebnis']);
+      text += mailAbschnitt('8. AUFSTELLORT WÄRMEPUMPE', ['standort','grenzabstand','abstand_fenster','schallreflexion','fundament','leitungsweg']);
+      text += mailAbschnitt('9. HEIZLAST-ÜBERSCHLAG', ['fenster_erneuert','dach_gedaemmt','dach_daemmstaerke','fassade_gedaemmt','fassade_daemmstaerke','kellerdecke_gedaemmt','kellerdecke_daemmstaerke','heizlast_ergebnis']);
+    }
+
+    text += mailAbschnitt('10. ELEKTRO-CHECKLISTE', ['el_zaehlerschrank','el_freier_zaehlerplatz','el_pv','dachflaeche_geeignet','leitungsfuehrung_gebaeude','kernbohrung_erforderlich','elektro_notizen']);
+    text += mailAbschnitt('11. NOTIZEN', ['notizen']);
+
+    text += '\nFOTOS / DATEIEN, bitte manuell anhängen:\n';
+    ['fotos_heizsystem','fotos_heizkoerper','fotos_technik','fotos_aufstellort','fotos_elektro'].forEach(id => {
+      const names = dateinamen(id);
+      if(names) text += labelVonFeld(id) + ': ' + names + '\n';
+    });
+
+    text += '\nHinweis: Bitte vorher die passende PDF mit Fotos erstellen und diese Datei an die Mail anhängen.\n';
+    return text;
+  }
+
+  function mailSenden(nurElektro){
+    const betreff = encodeURIComponent(nurElektro ? 'Elektro / PV-Checkliste' : 'Wärmepumpe Projekt-Checkliste');
+    const body = encodeURIComponent(datenAlsText(nurElektro));
+    window.location.href = 'mailto:info@tuerk-sarstedt.de?subject=' + betreff + '&body=' + body;
+  }
+
+  document.addEventListener('DOMContentLoaded', initAutosave);
+</script>
+</body>
+</html>
