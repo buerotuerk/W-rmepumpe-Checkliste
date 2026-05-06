@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "name": "Michael Türk",
+      "username": "michael.tuerk",
+      "password": "123MT4321?"
+    },
+    {
+      "name": "Matthias Otto",
+      "username": "matthias.otto",
+      "password": "123MO4321?"
+    },
+    {
+      "name": "Stefan Otto",
+      "username": "stefan.otto",
+      "password": "123SO4321?"
+    },
+    {
+      "name": "Frank Kühn",
+      "username": "frank.kuehn",
+      "password": "123FK4321?"
+    },
+    {
+      "name": "Jan Türk",
+      "username": "jan.tuerk",
+      "password": "123JT4321?"
+    }
+  ]
+}
