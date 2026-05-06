@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Projekt-Checkliste Wärmepumpe / Elektro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--green:#009681;--green-dark:#007f6e;--orange:#f97316;--dark:#1f2937;--muted:#6b7280;--bg:#f4f7f8;--border:#d9e2e4;--danger:#ef4444}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--dark)}.wrapper{max-width:1220px;margin:auto;padding:24px}.page{display:none}.page.active{display:block}
+.header{display:flex;align-items:center;gap:40px;margin-bottom:26px;background:white;border-radius:16px;padding:14px 20px;box-shadow:0 3px 12px rgba(0,0,0,.04)}
+.logo{width:360px;max-width:40%;height:auto;display:block}.logoPartner{width:260px;max-width:40%;height:auto;display:block}.headerText h1{font-size:34px;margin:0;line-height:1.15}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}.card{background:white;border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:22px;box-shadow:0 3px 10px rgba(0,0,0,.04)}
+h2{color:var(--green);margin:0 0 18px 0;font-size:22px}h3{margin:20px 0 12px 0;font-size:17px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
+label{font-weight:bold;display:block;margin-bottom:7px;font-size:14px}input,select,textarea{width:100%;padding:13px;border:1px solid #cfd8dc;border-radius:8px;font-size:16px;background:white}textarea{min-height:90px;resize:vertical}
+.photoBox{border:2px dashed #8acbc2;padding:22px;border-radius:12px;text-align:center;background:#f6fffd;margin-top:10px}.preview{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.previewItem{position:relative}.preview img{width:100%;height:120px;object-fit:cover;border-radius:10px;border:1px solid #ddd;display:block}.filePreview{min-height:80px;border:1px solid #ddd;border-radius:10px;background:#fff;padding:12px;text-align:left;font-size:13px;color:var(--dark);word-break:break-word}.deleteBtn{position:absolute;right:6px;bottom:6px;background:white;color:var(--danger);border:1px solid #eee;padding:5px 7px;font-size:14px;margin:0}
+button{background:var(--green);color:white;border:none;padding:13px 18px;border-radius:8px;font-size:16px;cursor:pointer;margin-top:8px;font-weight:bold}button:hover{background:var(--green-dark)}button.secondary{background:#374151}button.orange{background:var(--orange)}.actions{display:flex;flex-direction:column;gap:10px}
+.footer{background:var(--green);color:white;text-align:center;padding:14px;margin-top:24px;font-size:15px}.small{color:var(--muted);font-size:13px;margin-top:8px}.startScreen{min-height:calc(100vh - 80px);display:flex;align-items:center;justify-content:center}.startCard{width:100%;max-width:980px;background:white;border-radius:24px;padding:34px;box-shadow:0 8px 30px rgba(0,0,0,.08);text-align:center}.startLogos{display:flex;align-items:center;justify-content:center;gap:40px;margin-bottom:26px;flex-wrap:wrap}.startLogos img{max-width:360px;max-height:150px;object-fit:contain}.startTitle{font-size:34px;margin:10px 0 8px}.startSubtitle{color:var(--muted);font-size:17px;margin-bottom:30px}.startButtons{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:24px}.startButton{padding:28px 18px;font-size:22px;border-radius:18px;min-height:120px}.backBar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px}.backBar button{margin-top:0}
+@media(max-width:850px){.wrapper{padding:14px}.grid,.formgrid,.startButtons{grid-template-columns:1fr}.header{flex-direction:column;align-items:flex-start;gap:16px}.logo,.logoPartner{width:100%;max-width:430px}.headerText h1,.startTitle{font-size:27px}}
+@media print{button,input[type=file],.photoBox,.backBar{display:none!important}body{background:white}.wrapper{max-width:none;padding:0}.header,.card{box-shadow:none}.grid{display:block}.card{page-break-inside:avoid}}
+
+.ampelBox{margin-top:12px;padding:14px;border-radius:12px;border:1px solid var(--border);background:#f9fafb;font-weight:bold}
+.ampelGruen{background:#ecfdf5;border-color:#10b981;color:#065f46}
+.ampelGelb{background:#fffbeb;border-color:#f59e0b;color:#92400e}
+.ampelRot{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+
+
+/* Robuste Startseiten-Navigation auch ohne JavaScript */
+.page:target{display:block}
+body:has(#waermepumpe:target) #startseite,
+body:has(#elektro:target) #startseite{display:none}
+a.startButton{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  background:var(--green);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+a.startButton:hover{background:var(--green-dark)}
+a.startButton.orange{background:var(--orange)}
+
+
+.pvCanvasBox{margin-top:18px;padding:16px;border:1px solid var(--border);border-radius:14px;background:#f9fafb}
+.pvCanvasTools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.pvCanvasTools button{margin-top:0;padding:9px 11px;font-size:13px}
+.pvCanvasTools button.activeTool{outline:3px solid #111827;filter:brightness(.95)}
+#pv_mark_canvas{width:100%;max-width:760px;height:auto;border:1px solid #cfd8dc;border-radius:10px;background:#fff;touch-action:none;display:block}
+.pvMarkStatus{margin-top:10px;padding:12px;border-radius:10px;border:1px solid var(--border);background:#fff;white-space:pre-wrap;font-size:14px}
+.markLegend{font-size:12px;color:var(--muted);line-height:1.4}
+.markPill{display:inline-block;margin:2px 4px 2px 0;padding:3px 7px;border-radius:999px;background:#eef2ff;color:#1f2937}
+
+
+/* Schlankere PV-Methodenansicht */
+.full{grid-column:1/-1}
+.methodGroup{display:none;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.methodGroup h3{margin-top:4px}
+.compactHelp{background:#f9fafb;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:13px;color:var(--muted);line-height:1.45}
+.inlineUpload{border:1px dashed #8acbc2;background:#f6fffd;border-radius:12px;padding:12px;margin:8px 0 14px}
+.methodResult{margin-top:14px;min-height:120px}
+.slimCard{padding:18px}
+@media(max-width:850px){.methodGroup{padding-top:10px}.compactHelp{font-size:12px}}
+
+</style>
+</head>
+<body>
+
+<div id="startseite" class="page active"><div class="wrapper startScreen"><div class="startCard">
+<div class="startLogos"><img class="mainLogo" src="logo.jpg" alt="Michael Türk Logo"><img class="rieraLogo" src="logo_riera.jpg" alt="RIERA Logo"></div>
+<h1 class="startTitle">Projekt-Checkliste</h1><p class="startSubtitle">Wärmepumpe / Heizung und Elektro / PV gemeinsam erfassen</p>
+<div class="startButtons">
+<a href="#waermepumpe" id="btnWaermepumpe" class="startButton" onclick="showPage('waermepumpe'); return false;">🔥 Wärmepumpe / Heizung<br><span class="small" style="color:white">Altbau / Neubau erfassen</span></a>
+<a href="#elektro" id="btnElektro" class="startButton orange" onclick="showPage('elektro'); return false;">⚡ Elektro / PV<br><span class="small" style="color:white">Zählerschrank / Dach / Anschluss</span></a>
+</div></div></div></div>
+
+<div id="waermepumpe" class="page"><div class="wrapper">
+<div class="backBar"><a href="#startseite" class="secondary" style="display:inline-block;background:#374151;color:white;text-decoration:none;padding:13px 18px;border-radius:8px;font-size:16px;font-weight:bold" onclick="showPage('startseite'); return false;">⬅️ Zur Startseite</a><button onclick="speichern()">💾 Alle Daten speichern</button></div>
+<div class="header"><img src="logo.jpg" class="logo mainLogo" alt="Michael Türk Logo"><div class="headerText"><h1>Wärmepumpen-Checkliste Altbau / Neubau</h1></div></div>
+<div class="grid"><main>
+
+<div class="card"><h2>1. Kundendaten</h2><div class="formgrid">
+<div><label>Name</label><input id="name" placeholder="Ihr Name"></div><div><label>Adresse</label><input id="adresse" placeholder="Ihre Adresse"></div><div><label>Telefon</label><input id="telefon" placeholder="Ihre Telefonnummer"></div><div><label>E-Mail</label><input id="email" placeholder="Ihre E-Mail-Adresse"></div>
+<div><label>Gebäudetyp</label><select id="gebaeudetyp"><option value="">Bitte auswählen</option><option>Einfamilienhaus</option><option>Zweifamilienhaus</option><option>Mehrfamilienhaus</option><option>Reihenhaus</option><option>Doppelhaushälfte</option><option>Sonstiges</option></select></div>
+<div><label>Neubau / Bestand</label><select id="neubau_bestand"><option value="">Bitte auswählen</option><option>Bestand</option><option>Neubau</option></select></div>
+<div><label>Baujahr Gebäude</label><input id="baujahr_gebaeude" placeholder="z. B. 1990"></div><div><label>Objektadresse, falls abweichend</label><input id="objektadresse" placeholder="Straße, Ort"></div>
+</div></div>
+
+<div class="card"><h2>2. Energieverbrauch / aktuelle Heizung</h2><div class="formgrid">
+<div><label>Heizenergieverbrauch pro Jahr</label><input id="verbrauch" placeholder="z. B. 3000 l Öl / 28000 kWh Gas"></div><div><label>Verbrauch 2. Jahr</label><input id="verbrauch_jahr2" placeholder="Liter / kWh"></div><div><label>Verbrauch 3. Jahr</label><input id="verbrauch_jahr3" placeholder="Liter / kWh"></div>
+<div><label>Aktuelles Heizsystem</label><select id="heizsystem_alt"><option value="">Bitte auswählen</option><option>Gasheizung</option><option>Ölheizung</option><option>Pelletheizung</option><option>Wärmepumpe</option><option>Sonstiges</option></select></div>
+<div><label>Baujahr Heizung</label><input id="baujahr_heizung" placeholder="z. B. 2005"></div>
+<div><label>Foto aktuelle Heizung / Wärmeerzeuger</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'heizungPreview','Aktuelle Heizung / Wärmeerzeuger')"><div id="heizungPreview" class="preview"></div></div>
+</div></div>
+
+<div class="card"><h2>3. Gebäude</h2><div class="formgrid">
+<div><label>Wohnfläche ca. in m²</label><input id="wohnflaeche" placeholder="z. B. 140"></div><div><label>Davon beheizte Wohnfläche in m²</label><input id="beheizte_wohnflaeche" placeholder="z. B. 130"></div><div><label>Wohneinheiten</label><input id="wohneinheiten" placeholder="z. B. 1"></div><div><label>Anzahl Bewohner</label><input id="bewohner" placeholder="z. B. 4"></div>
+<div><label>Dämmzustand allgemein</label><select id="daemmung"><option value="">Bitte auswählen</option><option>Unsaniert</option><option>Teilweise saniert</option><option>Gut saniert</option><option>Unklar</option></select></div>
+<div><label>Keller vorhanden?</label><select id="keller"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilunterkellert</option><option>Unklar</option></select></div>
+<div><label>Foto Gebäude / Außenansicht</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'gebaeudePreview','Gebäude / Außenansicht')"><div id="gebaeudePreview" class="preview"></div></div>
+</div></div>
+
+<div class="card"><h2>4. Warmwasser</h2><div class="formgrid">
+<div><label>Warmwasser über Wärmepumpe?</label><select id="ww_waermepumpe"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Warmwasser bisher über Heizungsanlage?</label><select id="ww_bisher_heizung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Anzahl Duschen</label><input id="anzahl_duschen" placeholder="z. B. 2"></div><div><label>Anzahl Badewannen</label><input id="anzahl_badewannen" placeholder="z. B. 1"></div>
+<div><label>Warmwasserkomfort</label><select id="warmwasserkomfort"><option value="">Bitte auswählen</option><option>Standard</option><option>Komfort</option><option>Komfort Plus</option><option>Regendusche</option></select></div>
+<div><label>Zirkulationspumpe vorhanden/genutzt?</label><select id="zirkulationspumpe"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+</div></div>
+
+<div class="card"><h2>5. Heizsystem</h2><div class="formgrid">
+<div><label>Fußbodenheizung vorhanden?</label><select id="fussbodenheizung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option><option>Unklar</option></select></div>
+<div><label>Heizkörper vorhanden?</label><select id="heizkoerper_vorhanden"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option><option>Unklar</option></select></div>
+<div><label>Ventile voreinstellbar?</label><select id="ventile_voreinstellbar"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option><option>Unklar</option></select></div>
+<div><label>Aktuelle / bekannte Vorlauftemperatur</label><input id="vorlauftemperatur" placeholder="z. B. 55 °C"></div><div><label>Fußbodenheizung Etage/Bereich</label><input id="fussbodenheizung_etage" placeholder="z. B. EG teilweise"></div><div><label>Heizkörper Etage/Bereich</label><input id="heizkoerper_etage" placeholder="z. B. OG + DG"></div>
+</div><br><label>Fotos Heizsystem / Verteiler / Ventile</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'heizsystemPreview','Heizsystem / Verteiler / Ventile')"><div id="heizsystemPreview" class="preview"></div></div>
+
+<div class="card"><h2>6. Referenz-Heizkörper</h2><p class="small">Bitte 2 bis 3 typische Heizkörper aufnehmen, z. B. größter Heizkörper, kritischer Raum oder Badheizkörper.</p>
+<h3>Heizkörper 1</h3><div class="formgrid"><div><label>Raum</label><input id="hk1_raum" placeholder="z. B. Wohnzimmer"></div><div><label>Größe / Typ</label><input id="hk1_groesse" placeholder="z. B. 100 x 60 Typ 22"></div><div><label>Heizkörperart</label><input id="hk1_art" placeholder="z. B. Typ 22, Typ 33, Badheizkörper"></div><div><label>Bemerkung</label><textarea id="hk1_bemerkung" placeholder="z. B. kritisch, Nische, niedrige Bauhöhe"></textarea></div><div><label>Foto Heizkörper 1</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk1Preview','Heizkörper 1')"><div id="hk1Preview" class="preview"></div></div></div>
+<h3>Heizkörper 2</h3><div class="formgrid"><div><label>Raum</label><input id="hk2_raum" placeholder="z. B. Schlafzimmer"></div><div><label>Größe / Typ</label><input id="hk2_groesse" placeholder="z. B. 80 x 60 Typ 22"></div><div><label>Heizkörperart</label><input id="hk2_art" placeholder="z. B. Typ 22, Typ 33, Badheizkörper"></div><div><label>Bemerkung</label><textarea id="hk2_bemerkung" placeholder="z. B. ausreichend / kritisch"></textarea></div><div><label>Foto Heizkörper 2</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk2Preview','Heizkörper 2')"><div id="hk2Preview" class="preview"></div></div></div>
+<h3>Heizkörper 3</h3><div class="formgrid"><div><label>Raum</label><input id="hk3_raum" placeholder="z. B. Bad / Flur / Kinderzimmer"></div><div><label>Größe / Typ</label><input id="hk3_groesse" placeholder="z. B. 60 x 90 Typ 33"></div><div><label>Heizkörperart</label><input id="hk3_art" placeholder="z. B. Typ 22, Typ 33, Badheizkörper"></div><div><label>Bemerkung</label><textarea id="hk3_bemerkung" placeholder="z. B. kleiner Raum, hoher Wärmebedarf"></textarea></div><div><label>Foto Heizkörper 3</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'hk3Preview','Heizkörper 3')"><div id="hk3Preview" class="preview"></div></div></div>
+</div>
+
+<div class="card"><h2>7. Überschlag Heizlast</h2><p class="small">Grobe Vorabschätzung für die Angebotserstellung. Keine Heizlastberechnung nach DIN EN 12831.</p><div class="formgrid">
+<div><label>Fenster Zustand</label><select id="fenster_erneuert"><option value="">Bitte auswählen</option><option>Alt / nicht erneuert</option><option>Teilweise erneuert</option><option>2-fach modern</option><option>3-fach modern</option><option>Unklar</option></select></div>
+<div><label>Dach / oberste Geschossdecke Dämmzustand</label><select id="dach_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Schwach gedämmt</option><option>Teilweise / mittel gedämmt</option><option>Gut gedämmt</option><option>Unklar</option></select></div>
+<div><label>Dämmstärke Dach, falls bekannt</label><input id="dach_daemmstaerke" type="text" inputmode="decimal" min="0" step="1" placeholder="z. B. 12"></div>
+<div><label>Fassade Dämmzustand</label><select id="fassade_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Schwach gedämmt</option><option>Teilweise / mittel gedämmt</option><option>Gut gedämmt</option><option>Unklar</option></select></div>
+<div><label>Dämmstärke Fassade, falls bekannt</label><input id="fassade_daemmstaerke" type="text" inputmode="decimal" min="0" step="1" placeholder="z. B. 10"></div>
+<div><label>Kellerdecke / Bodenplatte Dämmzustand</label><select id="kellerdecke_gedaemmt"><option value="">Bitte auswählen</option><option>Nicht gedämmt</option><option>Schwach gedämmt</option><option>Teilweise / mittel gedämmt</option><option>Gut gedämmt</option><option>Unklar</option></select></div>
+<div><label>Dämmstärke Kellerdecke, falls bekannt</label><input id="kellerdecke_daemmstaerke" type="text" inputmode="decimal" min="0" step="1" placeholder="z. B. 8"></div>
+</div><button onclick="heizlastBerechnen()">🔥 Heizlast überschlägig berechnen</button><textarea id="heizlast_ergebnis" readonly placeholder="Hier erscheint die überschlägige Heizlast..."></textarea></div>
+
+
+
+<div class="card"><h2>8. Hydraulik & Technik</h2><div class="formgrid">
+<div><label>Pumpentyp / Heizungspumpe</label><input id="pumpentyp" placeholder="Hersteller / Typ / Leistung"></div>
+<div><label>Heizlast für Rohrprüfung in kW</label><input id="rohrcheck_heizlast" placeholder="wird aus Heizlast übernommen oder manuell eintragen"></div>
+<div><label>Außendurchmesser gemessen in mm</label><input id="rohr_aussendurchmesser" placeholder="z. B. 22, 28, 60,3"></div>
+<div><label>Dimension aus Messwert ermitteln</label><button type="button" onclick="rohrdimensionAusAussendurchmesser()">📏 Dimension ermitteln</button></div>
+<div id="rohrmessung_hinweis" class="ampelBox">Noch kein Außendurchmesser gemessen.</div>
+<div><label>Rohrmaterial / Rohrgröße</label><select id="rohrcheck_dimension"><option value="">Bitte auswählen</option>
+<option value="cu15">Kupferrohr 15 mm</option><option value="cu18">Kupferrohr 18 mm</option><option value="cu22">Kupferrohr 22 mm</option><option value="cu28">Kupferrohr 28 mm</option><option value="cu35">Kupferrohr 35 mm</option><option value="cu42">Kupferrohr 42 mm</option><option value="cu54">Kupferrohr 54 mm</option><option value="cu64">Kupferrohr 64 mm</option>
+<option value="msvr16">Aluverbundrohr 16 x 2</option><option value="msvr20">Aluverbundrohr 20 x 2</option><option value="msvr26">Aluverbundrohr 26 x 3</option><option value="msvr32">Aluverbundrohr 32 x 3</option><option value="msvr40">Aluverbundrohr 40 x 3,5</option><option value="msvr50">Aluverbundrohr 50 x 4,5</option><option value="msvr63">Aluverbundrohr 63 x 6</option>
+<option value="stahl15">Stahlrohr DN15 / 1/2 Zoll</option><option value="stahl20">Stahlrohr DN20 / 3/4 Zoll</option><option value="stahl25">Stahlrohr DN25 / 1 Zoll</option><option value="stahl32">Stahlrohr DN32 / 1 1/4 Zoll</option><option value="stahl40">Stahlrohr DN40 / 1 1/2 Zoll</option><option value="stahl50">Stahlrohr DN50 / 2 Zoll</option><option value="stahl65">Stahlrohr DN65 / 2 1/2 Zoll</option>
+</select></div>
+<div><label>Spreizung</label><select id="rohrcheck_spreizung"><option value="">Bitte auswählen</option><option value="5">5 K</option><option value="7">7 K</option><option value="10">10 K</option><option value="15">15 K</option><option value="20">20 K</option></select></div>
+<div><label>Rohrdimension prüfen</label><button type="button" onclick="rohrdimensionPruefen()">🚦 Rohrdimension prüfen</button></div>
+<div><label>Pufferspeicher vorhanden?</label><select id="pufferspeicher"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Warmwasserspeicher vorhanden?</label><select id="warmwasserspeicher"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Heizlastberechnung vorhanden?</label><select id="heizlastberechnung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Hydraulischer Abgleich vorhanden?</label><select id="hydraulischer_abgleich"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+</div><div id="rohrcheck_ampel" class="ampelBox">Rohrprüfung noch nicht durchgeführt.</div><textarea id="rohrcheck_ergebnis" readonly placeholder="Hier erscheint die Bewertung der Rohrdimension..."></textarea><br><label>Fotos Pumpe / Speicher / Rohrleitungen / Typenschilder</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'technikPreview','Hydraulik / Technik / Typenschilder')"><div id="technikPreview" class="preview"></div></div>
+
+<div class="card"><h2>9. Aufstellort Wärmepumpe / Außengerät</h2><div class="formgrid">
+<div><label>Beschreibung Standort</label><textarea id="standort" placeholder="z. B. links neben Garage"></textarea></div><div><label>Grenzabstand / Abstand Nachbar</label><input id="grenzabstand" placeholder="z. B. 3 m"></div><div><label>Abstand Fenster</label><input id="abstand_fenster" placeholder="z. B. 5 m"></div>
+<div><label>Schallreflexion auffällig?</label><select id="schallreflexion"><option value="">Bitte auswählen</option><option>Nein</option><option>Ja</option><option>Unklar</option></select></div>
+<div><label>Fundament möglich?</label><select id="fundament"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Leitungsweg möglich?</label><select id="leitungsweg"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+</div><br><label>Fotos Aufstellort / Leitungsweg</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'standortPreview','Aufstellort / Leitungsweg')"><div id="standortPreview" class="preview"></div></div>
+
+</main><aside>
+<div class="card"><h2>10. Allgemeine Fotos</h2><p>Zählerschrank, Technikraum, Leitungswege, Typenschilder, Außenansicht usw.</p><div class="photoBox"><strong>Fotos auswählen oder aufnehmen</strong><br><br><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'allgemeinPreview','Allgemeine Fotos')"><p class="small">JPG / PNG – mehrere Fotos möglich</p></div><div id="allgemeinPreview" class="preview"></div></div>
+<div class="card"><h2>11. Notizen</h2><textarea id="notizen" placeholder="Weitere Hinweise, Besonderheiten oder offene Fragen..."></textarea></div>
+<div class="card actions"><h2>Ausgabe</h2><button onclick="speichern()">💾 Daten speichern</button><button onclick="laden()">📂 Daten laden</button><button onclick="datenLoeschen()">🗑️ Gespeicherte Daten löschen</button><button onclick="pdfErstellen()">📄 PDF Wärmepumpe erstellen</button></div>
+</aside></div></div></div>
+
+<div id="elektro" class="page"><div class="wrapper">
+<div class="backBar"><a href="#startseite" class="secondary" style="display:inline-block;background:#374151;color:white;text-decoration:none;padding:13px 18px;border-radius:8px;font-size:16px;font-weight:bold" onclick="showPage('startseite'); return false;">⬅️ Zur Startseite</a><button onclick="speichern()">💾 Alle Daten speichern</button></div>
+<div class="header"><img src="logo_riera.jpg" class="logoPartner rieraLogo" alt="RIERA Logo"><div class="headerText"><h1>Elektro / PV-Checkliste</h1></div></div>
+<div class="grid"><main>
+
+<div class="card"><h2>1. Gemeinsame Objektdaten</h2><div class="formgrid">
+<div><label>Name</label><input id="el_name" placeholder="falls abweichend"></div><div><label>Objektadresse</label><input id="el_objektadresse" placeholder="Straße, Ort"></div><div><label>Baujahr Gebäude</label><input id="el_baujahr_gebaeude" placeholder="z. B. 1990"></div><div><label>Wohnfläche ca. in m²</label><input id="el_wohnflaeche" placeholder="z. B. 140"></div>
+<div><label>Gebäudetyp</label><select id="el_gebaeudetyp"><option value="">Bitte auswählen</option><option>Einfamilienhaus</option><option>Zweifamilienhaus</option><option>Mehrfamilienhaus</option><option>Reihenhaus</option><option>Doppelhaushälfte</option><option>Sonstiges</option></select></div>
+<div><label>Garage vorhanden?</label><select id="garage"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+</div></div>
+
+<div class="card"><h2>2. Zählerschrank / Hausanschluss</h2><div class="formgrid">
+<div><label>Baujahr Zählerschrank</label><input id="baujahr_zaehlerschrank" placeholder="z. B. 1995"></div><div><label>Erneuerung Zählerschrank notwendig?</label><select id="zaehlerschrank_erneuerung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div><div><label>Zählerschrankhöhe</label><select id="zaehlerschrank_hoehe"><option value="">Bitte auswählen</option><option>900 mm</option><option>1.100 mm</option><option>1.400 mm</option><option>Sonstiges</option></select></div><div><label>Zählerschrankbreite</label><input id="zaehlerschrank_breite" placeholder="z. B. 550 mm"></div><div><label>Zählerplätze vorhanden</label><input id="zaehlerplaetze" placeholder="z. B. 1 oder 2"></div><div><label>Unterverteilung / Multimediafeld vorhanden?</label><input id="unterverteilung_multimedia" placeholder="z. B. Untervtlg. ja"></div><div><label>Baujahr HAK</label><input id="baujahr_hak" placeholder="z. B. 1980"></div><div><label>HAK-Erneuerung notwendig?</label><select id="hak_erneuerung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div><div><label>Hauserdung vorhanden?</label><select id="hauserdung"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div><div><label>Hausanschlussleistung</label><input id="hausanschlussleistung" placeholder="z. B. 63 A"></div>
+</div><br><label>Fotos Zählerschrank / HAK / Erdung</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'elektroZaehlerschrankPreview','Zählerschrank / HAK / Erdung')"><div id="elektroZaehlerschrankPreview" class="preview"></div></div>
+
+<div class="card"><h2>3. PV / Dach</h2><div class="formgrid">
+<div><label>Dachfläche geeignet?</label><select id="dachflaeche_geeignet"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Teilweise</option><option>Unklar</option></select></div><div><label>Ermittelte Dachfläche in m²</label><input id="dachflaeche" readonly placeholder="wird unten aus einer Methode übernommen"></div><div><label>Dachausrichtung</label><input id="dachausrichtung" placeholder="z. B. Süd, Ost/West"></div><div><label>Dachneigung</label><input id="dachneigung" placeholder="z. B. 35°"></div><div><label>Dacheindeckung</label><input id="dacheindeckung" placeholder="z. B. Ziegel, Betonstein"></div><div><label>Verschattung vorhanden?</label><select id="verschattung"><option value="">Bitte auswählen</option><option>Nein</option><option>Ja</option><option>Teilweise</option><option>Unklar</option></select></div><div><label>Speicher gewünscht?</label><select id="speicher_gewuenscht"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div><div><label>Wallbox / Ladepunkt gewünscht?</label><select id="wallbox_gewuenscht"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+</div><p class="small">Die Dachfläche wird im nächsten Abschnitt bewusst nur über eine der vier Methoden übernommen: manuell, Ziegel, Zeichnung/Maße oder Foto-Markierung.</p></div>
+
+
+<div class="card slimCard"><h2>4. Dachfläche ermitteln</h2>
+<p class="small">Bitte eine Methode wählen. Danach wird nur der passende Eingabebereich geöffnet. Das Ergebnis wird oben in „Ermittelte Dachfläche“ übernommen.</p>
+<div class="formgrid">
+<div class="full"><label>Berechnungsmethode Dachfläche</label><select id="pv_dach_methode" onchange="pvSetDachMethode()"><option value="manual">1. Dachfläche manuell eingeben</option><option value="ziegel">2. Dachfläche aus Ziegeln berechnen</option><option value="zeichnung">3. Zeichnung / Grundriss einlesen und aus Maßen berechnen</option><option value="foto">4. Dachfläche aus Foto-Markierung berechnen</option></select></div>
+</div>
+<div id="pv_method_manual" class="methodGroup">
+<h3>1. Dachfläche manuell eingeben</h3>
+<div class="formgrid"><div><label>Manuelle Dachfläche in m²</label><input id="pv_dachflaeche_manuell" type="text" inputmode="decimal" placeholder="z. B. 50,1"></div><div><label>Wert übernehmen</label><button type="button" class="orange" onclick="pvDachflaecheManuellUebernehmen()">✅ Manuelle Dachfläche übernehmen</button></div></div>
+</div>
+<div id="pv_method_zeichnung" class="methodGroup">
+<h3>3. Zeichnung / Grundriss einlesen und aus Maßen berechnen</h3>
+<p class="compactHelp">Erst Grundriss, Schnitt, Ansicht oder Dachzeichnung einlesen. Danach die sichtbaren Maße aus der Zeichnung in die Felder eintragen. Sobald Länge/Breite und optional Dachneigung vorhanden sind, kann die App die Dachfläche überschlägig berechnen.</p>
+<div class="inlineUpload">
+<label>Zeichnung einlesen: Grundriss / Schnitt / Dachansicht / PDF / Foto</label>
+<input type="file" accept="image/*,application/pdf" multiple onchange="preview(this,'elektroZeichnungPreview','Bauzeichnung / Grundriss / Schnitt / Dachansicht')">
+<div id="elektroZeichnungPreview" class="preview"></div>
+<p class="small">Hinweis: Bilder können für die Foto-Markierung geladen werden. PDFs werden gespeichert und im PDF-Bericht aufgeführt, aber im Browser nicht automatisch vermessen.</p>
+</div>
+<div class="formgrid">
+<div><label>Bauzeichnungen / Grundriss vorhanden?</label><select id="pv_zeichnungen_vorhanden"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Dachzeichnung / Schnitt / Ansicht vorhanden?</label><select id="pv_dachzeichnung_vorhanden"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div>
+<div><label>Dachform</label><select id="pv_dachform"><option value="">Bitte auswählen</option><option>Satteldach</option><option>Pultdach</option><option>Walmdach</option><option>Flachdach</option><option>Sonstiges / unklar</option></select></div>
+<div><label>Anzahl nutzbarer Dachflächen</label><select id="pv_anzahl_dachflaechen"><option value="">Bitte auswählen</option><option value="1">1 Dachfläche</option><option value="2">2 Dachflächen</option><option value="3">3 Dachflächen</option><option value="4">4 Dachflächen</option></select></div>
+<div><label>Gebäudelänge / Trauflänge in m</label><input id="pv_gebaeudelaenge" type="text" inputmode="decimal" placeholder="z. B. 10,5"></div>
+<div><label>Gebäudebreite in m</label><input id="pv_gebaeudebreite" type="text" inputmode="decimal" placeholder="z. B. 8,2"></div>
+<div><label>Dachüberstand je Seite in m</label><input id="pv_dachueberstand" type="text" inputmode="decimal" placeholder="z. B. 0,30"></div>
+<div><label>Abzugsfläche Dachfenster/Gauben/Schornstein in m²</label><input id="pv_abzugsflaeche" type="text" inputmode="decimal" placeholder="z. B. 6"></div>
+</div>
+<button class="orange" type="button" onclick="pvFlaecheAusMassenBerechnen()">📐 Dachfläche aus Zeichnung / Maßen berechnen und übernehmen</button>
+</div>
+
+<div id="pv_method_ziegel" class="methodGroup">
+<h3>2. Dachfläche aus Ziegeln berechnen</h3>
+<p class="small">Ziegeltyp auswählen und Dachflächen aus einfachen Teilflächen zusammensetzen. Rechteck: Breite × Höhe. Trapez: (oben + unten) / 2 × Höhe. Dreieck: unten × Höhe / 2. Gezählt wird jeweils in sichtbaren Ziegelreihen.</p>
+<div class="formgrid">
+<div><label>Ziegeltyp / Deckmaß-Datenbank</label><select id="pv_ziegel_standard" onchange="pvZiegelStandardUebernehmen()"><option value="">Eigener Ziegel / unbekannt</option><option value="braas_frankfurter">Braas Frankfurter Pfanne / Betonpfanne</option><option value="creaton_magnum">Creaton Magnum</option><option value="braas_turmalin">Braas Turmalin</option><option value="nelskamp_r13s">Nelskamp R 13 S</option><option value="braas_granat_11v">Braas Granat 11V</option><option value="laumans_tiefa_xltop">Laumans Tiefa XLTOP</option><option value="creaton_klassik_biber">Creaton Klassik Biberschwanz</option></select></div>
+<div><label>Deckmaß übernehmen</label><button type="button" class="orange" onclick="pvZiegelStandardUebernehmen()">🧱 Deckmaß übernehmen</button></div>
+<div><label>Deckbreite in cm</label><input id="pv_ziegel_breite_cm" type="text" inputmode="decimal" placeholder="z. B. 30"></div>
+<div><label>Decklänge / sichtbare Höhe in cm</label><input id="pv_ziegel_hoehe_cm" type="text" inputmode="decimal" placeholder="z. B. 33"></div>
+<div><label>Bedarf je m²</label><input id="pv_ziegel_bedarf_m2" type="text" readonly placeholder="wird bei Auswahl gesetzt"></div>
+<div><label>Manueller Abzug in m²</label><input id="pv_ziegel_abzug" type="text" inputmode="decimal" placeholder="z. B. Dachfenster gesamt 4"></div>
+</div>
+<h3>Ziegel-Teilflächen</h3>
+<p class="small">Für normale Dachseiten meist Fläche 1 als Rechteck. Bei Gauben, Dreiecken oder Trapezen weitere Teilflächen ergänzen und unten berechnen.</p>
+<div class="formgrid">
+<div><label>Fläche 1 Form</label><select id="pv_ziegel_f1_form"><option value="rechteck">Rechteck</option><option value="trapez">Trapez</option><option value="dreieck">Dreieck</option></select></div>
+<div><label>Fläche 1 Anzahl gleicher Flächen</label><input id="pv_ziegel_f1_anzahl" type="text" inputmode="numeric" placeholder="z. B. 1"></div>
+<div><label>Fläche 1 Ziegel unten / waagerecht</label><input id="pv_ziegel_f1_unten" type="text" inputmode="decimal" placeholder="z. B. 36"></div>
+<div><label>Fläche 1 Ziegel oben (nur Trapez)</label><input id="pv_ziegel_f1_oben" type="text" inputmode="decimal" placeholder="z. B. 36"></div>
+<div><label>Fläche 1 Ziegelhöhe / senkrecht</label><input id="pv_ziegel_f1_hoehe" type="text" inputmode="decimal" placeholder="z. B. 16"></div>
+<div><label>Fläche 1 Notiz</label><input id="pv_ziegel_f1_notiz" type="text" placeholder="z. B. Hauptdach links"></div>
+
+<div><label>Fläche 2 Form</label><select id="pv_ziegel_f2_form"><option value="">nicht verwenden</option><option value="rechteck">Rechteck</option><option value="trapez">Trapez</option><option value="dreieck">Dreieck</option></select></div>
+<div><label>Fläche 2 Anzahl gleicher Flächen</label><input id="pv_ziegel_f2_anzahl" type="text" inputmode="numeric" placeholder="z. B. 1"></div>
+<div><label>Fläche 2 Ziegel unten / waagerecht</label><input id="pv_ziegel_f2_unten" type="text" inputmode="decimal" placeholder="z. B. 17"></div>
+<div><label>Fläche 2 Ziegel oben (nur Trapez)</label><input id="pv_ziegel_f2_oben" type="text" inputmode="decimal" placeholder="z. B. 9"></div>
+<div><label>Fläche 2 Ziegelhöhe / senkrecht</label><input id="pv_ziegel_f2_hoehe" type="text" inputmode="decimal" placeholder="z. B. 15"></div>
+<div><label>Fläche 2 Notiz</label><input id="pv_ziegel_f2_notiz" type="text" placeholder="z. B. Gaube / Trapez"></div>
+
+<div><label>Fläche 3 Form</label><select id="pv_ziegel_f3_form"><option value="">nicht verwenden</option><option value="rechteck">Rechteck</option><option value="trapez">Trapez</option><option value="dreieck">Dreieck</option></select></div>
+<div><label>Fläche 3 Anzahl gleicher Flächen</label><input id="pv_ziegel_f3_anzahl" type="text" inputmode="numeric" placeholder="z. B. 1"></div>
+<div><label>Fläche 3 Ziegel unten / waagerecht</label><input id="pv_ziegel_f3_unten" type="text" inputmode="decimal" placeholder="z. B. 12"></div>
+<div><label>Fläche 3 Ziegel oben (nur Trapez)</label><input id="pv_ziegel_f3_oben" type="text" inputmode="decimal" placeholder="z. B. 6"></div>
+<div><label>Fläche 3 Ziegelhöhe / senkrecht</label><input id="pv_ziegel_f3_hoehe" type="text" inputmode="decimal" placeholder="z. B. 8"></div>
+<div><label>Fläche 3 Notiz</label><input id="pv_ziegel_f3_notiz" type="text" placeholder="optional"></div>
+
+<div><label>Fläche 4 Form</label><select id="pv_ziegel_f4_form"><option value="">nicht verwenden</option><option value="rechteck">Rechteck</option><option value="trapez">Trapez</option><option value="dreieck">Dreieck</option></select></div>
+<div><label>Fläche 4 Anzahl gleicher Flächen</label><input id="pv_ziegel_f4_anzahl" type="text" inputmode="numeric" placeholder="z. B. 1"></div>
+<div><label>Fläche 4 Ziegel unten / waagerecht</label><input id="pv_ziegel_f4_unten" type="text" inputmode="decimal" placeholder="z. B. 10"></div>
+<div><label>Fläche 4 Ziegel oben (nur Trapez)</label><input id="pv_ziegel_f4_oben" type="text" inputmode="decimal" placeholder="z. B. 4"></div>
+<div><label>Fläche 4 Ziegelhöhe / senkrecht</label><input id="pv_ziegel_f4_hoehe" type="text" inputmode="decimal" placeholder="z. B. 6"></div>
+<div><label>Fläche 4 Notiz</label><input id="pv_ziegel_f4_notiz" type="text" placeholder="optional"></div>
+</div>
+<button class="orange" type="button" onclick="pvFlaecheAusZiegelnBerechnen()">🧱 Dachfläche aus Ziegel-Teilflächen berechnen und übernehmen</button>
+</div>
+<div id="pv_method_foto" class="methodGroup">
+<h3>4. Dachfläche aus Foto-Markierung</h3>
+<p class="small">Foto hochladen, Dachfläche markieren und Abzüge markieren. Die m²-Basis kommt aus der zuvor übernommenen Dachfläche (manuell, Ziegel oder Zeichnung). Die Foto-Markierung zieht Hindernisse anteilig ab.</p>
+<div class="inlineUpload">
+<label>Foto / Scan für Markierung einlesen</label>
+<input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'elektroDachFotoPreview','Dachfoto / Scan für Foto-Markierung')">
+<div id="elektroDachFotoPreview" class="preview"></div>
+<p class="small">Nach dem Einlesen unten „Foto in Markierfläche laden“ klicken. Danach Dachfläche und Abzüge markieren.</p>
+</div>
+<div class="pvCanvasBox">
+<h3>Foto-Markierung / Abzüge</h3>
+<p class="small">Die echte m²-Basis kommt aus der vorher übernommenen Dachfläche. Die Foto-Markierung bestätigt die Fläche und zieht Dachfenster, Schornstein, Gauben oder Verschattung anteilig ab.</p>
+<div class="pvCanvasTools">
+<button type="button" class="secondary" onclick="pvMarkFotoLaden()">📷 Foto in Markierfläche laden</button>
+<button type="button" id="toolRoof" onclick="pvSetMarkTool('roof')">🟢 Dachfläche markieren</button>
+<button type="button" onclick="pvCloseRoof()">✅ Dachfläche abschließen</button>
+<button type="button" id="toolObstacle" onclick="pvSetMarkTool('obstacle')">🔴 Abzug markieren</button>
+<button type="button" onclick="pvCloseObstacle()">✅ Abzug abschließen</button>
+<button type="button" id="toolCircle" onclick="pvSetMarkTool('circle')">⭕ Kreis-Abzug</button>
+<button type="button" class="secondary" onclick="pvUndoMarkPoint()">↩️ Punkt zurück</button>
+<button type="button" class="secondary" onclick="pvResetMarkierungen()">🧹 Markierungen löschen</button>
+<button type="button" class="orange" onclick="pvFlaecheAusFotoMarkierungBerechnen()">📸 Markierte Fläche berechnen</button>
+</div>
+<p class="markLegend"><span class="markPill">🟢 Dachfläche</span><span class="markPill">🔴 Abzug</span><span class="markPill">⭕ Kreis-Abzug</span><br>Dachfläche mit mehreren Punkten umranden und „Dachfläche abschließen“. Abzüge einzeln markieren und jeweils abschließen. Die errechneten m² erscheinen direkt unter dem Bild.</p>
+<canvas id="pv_mark_canvas" width="900" height="520"></canvas>
+<div id="pv_mark_status" class="pvMarkStatus">Noch keine Foto-Markierung berechnet.</div>
+</div>
+</div>
+<textarea id="pv_dachflaeche_ergebnis" class="methodResult" readonly placeholder="Hier erscheint das Ergebnis der ausgewählten Dachflächen-Methode..."></textarea>
+</div>
+
+<div class="card"><h2>5. Leitungswege / Tiefbau / Außenbereich</h2><div class="formgrid">
+<div><label>Leitungsführung im Gebäude</label><select id="leitungsfuehrung_gebaeude"><option value="">Bitte auswählen</option><option>Tragschiene</option><option>Leitungsführungskanal</option><option>Stangenrohr Kunststoff / Alu</option><option>Unklar</option></select></div><div><label>Kernbohrung erforderlich?</label><select id="kernbohrung_erforderlich"><option value="">Bitte auswählen</option><option>Ja</option><option>Nein</option><option>Unklar</option></select></div><div><label>Kernbohrung Anzahl</label><input id="kernbohrung_anzahl" placeholder="Stück"></div><div><label>Tiefbau Asphalt</label><input id="tiefbau_asphalt" placeholder="m"></div><div><label>Tiefbau Pflasterung</label><input id="tiefbau_pflasterung" placeholder="m"></div><div><label>Tiefbau Grünfläche</label><input id="tiefbau_gruenflaeche" placeholder="m"></div><div><label>Zusätzliche Leitungslänge in Metern</label><input id="leitung_meter" placeholder="z. B. 18 m"></div><div><label>Hinweise Leitungslänge</label><input id="leitung_meter_hinweis" placeholder="z. B. vom Zählerschrank bis Wallbox / WP"></div>
+</div><br><label>Fotos Leitungswege / Außenbereich / Tiefbau</label><input type="file" accept="image/*" capture="environment" multiple onchange="preview(this,'elektroLeitungPreview','Leitungswege / Tiefbau / Außenbereich')"><div id="elektroLeitungPreview" class="preview"></div></div>
+
+<div class="card"><h2>6. PV-Potenzial überschlägig</h2><p class="small">Grobe Vorabschätzung aus Dachfläche, Ausrichtung und Verschattung.</p><button class="orange" onclick="pvBerechnen()">☀️ PV-Potenzial berechnen</button><textarea id="pv_ergebnis" readonly placeholder="Hier erscheint das überschlägige PV-Potenzial..."></textarea></div>
+<div class="card"><h2>7. Notizen Elektro / PV</h2><textarea id="elektro_notizen" placeholder="Weitere Hinweise vom Elektriker..."></textarea></div>
+</main><aside><div class="card actions"><h2>Ausgabe Elektro</h2><button onclick="speichern()">💾 Daten speichern</button><button onclick="laden()">📂 Daten laden</button><button onclick="datenLoeschen()">🗑️ Gespeicherte Daten löschen</button><button class="orange" onclick="pdfElektroErstellen()">📄 PDF Elektro / PV erstellen</button></div></aside></div></div></div>
+
+<div class="footer">🔒 Ihre Daten werden vertraulich behandelt und ausschließlich zur Angebotserstellung verwendet.</div>
+
+<script>
+const photoStore={};
+const syncMapping=[["name","el_name"],["objektadresse","el_objektadresse"],["baujahr_gebaeude","el_baujahr_gebaeude"],["wohnflaeche","el_wohnflaeche"],["gebaeudetyp","el_gebaeudetyp"]];
+function ladeBildRobust(img,dateien){let i=0;img.onerror=function(){i++;if(i<dateien.length){img.src=dateien[i]}};img.src=dateien[0]}
+function initLogos(){document.querySelectorAll(".mainLogo").forEach(function(img){ladeBildRobust(img,["logo.jpg","Logo.jpg","logo.JPG"])});document.querySelectorAll(".rieraLogo").forEach(function(img){ladeBildRobust(img,["logo_riera.jpg","Logo_riera.jpg","logo_riera.JPG","Logo_Riera.jpg","riera.jpg","Riera.jpg"])})}
+function showPage(pageId){syncAlleGemeinsamenFelder();document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active")});const p=document.getElementById(pageId);if(p){p.classList.add("active");window.scrollTo(0,0)}}
+function syncFeld(vonId,nachId){const v=document.getElementById(vonId),n=document.getElementById(nachId);if(v&&n&&n.value!==v.value)n.value=v.value}
+function syncAlleGemeinsamenFelder(){syncMapping.forEach(function(pair){const wp=document.getElementById(pair[0]),el=document.getElementById(pair[1]);if(!wp||!el)return;if(wp.value&&!el.value)el.value=wp.value;else if(el.value&&!wp.value)wp.value=el.value})}
+function initLiveSync(){syncMapping.forEach(function(pair){const wp=document.getElementById(pair[0]),el=document.getElementById(pair[1]);if(wp&&el){wp.addEventListener("input",function(){syncFeld(pair[0],pair[1])});wp.addEventListener("change",function(){syncFeld(pair[0],pair[1])});el.addEventListener("input",function(){syncFeld(pair[1],pair[0])});el.addEventListener("change",function(){syncFeld(pair[1],pair[0])})}})}
+function preview(input,targetId,gruppe){
+  const target=document.getElementById(targetId);
+  if(!target)return;
+  target.innerHTML="";
+  photoStore[targetId]=[];
+  if(targetId==="elektroZeichnungPreview" && input.files && input.files.length){
+    const z=document.getElementById("pv_zeichnungen_vorhanden");
+    const d=document.getElementById("pv_dachzeichnung_vorhanden");
+    if(z)z.value="Ja";
+    if(d)d.value="Ja";
+  }
+  Array.from(input.files).forEach(function(file){
+    const reader=new FileReader();
+    reader.onload=function(e){
+      const eintrag={gruppe:gruppe,name:file.name,type:file.type||"",data:e.target.result};
+      photoStore[targetId].push(eintrag);
+      const box=document.createElement("div");
+      box.className="previewItem";
+      if(String(file.type).startsWith("image/")){
+        const img=document.createElement("img");
+        img.src=e.target.result;
+        box.appendChild(img);
+      }else{
+        const fileBox=document.createElement("div");
+        fileBox.className="filePreview";
+        fileBox.innerHTML="📄 <strong>"+file.name+"</strong><br><span class='small'>Datei eingelesen. Für Berechnung bitte Maße aus der Zeichnung in die Felder übertragen.</span>";
+        box.appendChild(fileBox);
+      }
+      const btn=document.createElement("button");
+      btn.className="deleteBtn";
+      btn.innerHTML="🗑️";
+      btn.type="button";
+      btn.onclick=function(){const i=Array.from(target.children).indexOf(box);if(i>-1)photoStore[targetId].splice(i,1);box.remove()};
+      box.appendChild(btn);
+      target.appendChild(box);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function speichern(){speichernOhneMeldung();alert("Daten gespeichert ✅")}
+function speichernOhneMeldung(){syncAlleGemeinsamenFelder();const felder=document.querySelectorAll("input:not([type=file]), select, textarea");let daten={};felder.forEach(function(f){if(f.id)daten[f.id]=f.value});localStorage.setItem("wp_checkliste_final",JSON.stringify(daten))}
+function ladenOhneMeldung(){const s=localStorage.getItem("wp_checkliste_final")||localStorage.getItem("wp_checkliste_v4")||localStorage.getItem("wp_checkliste_v3")||localStorage.getItem("wp_checkliste_v2");if(!s)return;const daten=JSON.parse(s);Object.keys(daten).forEach(function(id){const f=document.getElementById(id);if(f)f.value=daten[id]});syncAlleGemeinsamenFelder()}
+function laden(){ladenOhneMeldung();alert("Daten geladen ✅")}
+function datenLoeschen(){if(!confirm("Sollen wirklich alle gespeicherten Daten, Eingaben und Fotos gelöscht werden?"))return;["wp_checkliste_final","wp_checkliste_v4","wp_checkliste_v3","wp_checkliste_v2"].forEach(function(k){localStorage.removeItem(k)});document.querySelectorAll("input:not([type=file]), select, textarea").forEach(function(f){f.value=""});document.querySelectorAll("input[type=file]").forEach(function(f){f.value=""});document.querySelectorAll(".preview").forEach(function(p){p.innerHTML=""});Object.keys(photoStore).forEach(function(k){photoStore[k]=[]});try{pvResetMarkierungen(false)}catch(e){};alert("Gespeicherte Daten, Eingaben und Fotos wurden gelöscht ✅");location.reload()}
+function feldwert(id){const f=document.getElementById(id);return f?f.value:""}
+function zahlAusText(text){if(!text)return 0;const m=String(text).replace(",",".").match(/[0-9]+(\.[0-9]+)?/);return m?parseFloat(m[0]):0}
+function heizlastBerechnen(){
+  const fl=zahlAusText(feldwert("beheizte_wohnflaeche"))||zahlAusText(feldwert("wohnflaeche")),bj=zahlAusText(feldwert("baujahr_gebaeude")),verbrauch=zahlAusText(feldwert("verbrauch"));
+  if(!fl){alert("Bitte zuerst Wohnfläche oder beheizte Wohnfläche eintragen.");return}
+  let w=90;
+  if(bj){if(bj<1978)w=115;else if(bj<1995)w=90;else if(bj<2002)w=75;else if(bj<2016)w=60;else w=45}
+  const d=feldwert("daemmung");
+  if(d==="Unsaniert")w+=15;
+  if(d==="Teilweise saniert")w-=5;
+  if(d==="Gut saniert")w-=20;
+  const fen=feldwert("fenster_erneuert");
+  if(fen==="Alt / nicht erneuert")w+=6;
+  if(fen==="Teilweise erneuert")w-=2;
+  if(fen==="2-fach modern")w-=5;
+  if(fen==="3-fach modern")w-=8;
+  [feldwert("dach_gedaemmt"),feldwert("fassade_gedaemmt"),feldwert("kellerdecke_gedaemmt")].forEach(function(x){
+    if(x==="Nicht gedämmt")w+=5;
+    if(x==="Schwach gedämmt")w-=2;
+    if(x==="Teilweise / mittel gedämmt")w-=6;
+    if(x==="Gut gedämmt")w-=10;
+  });
+  function zusatzAbzugDaemmstaerke(cm,bauteil){
+    if(!cm||cm<=0)return 0;
+    if(bauteil==="dach"){if(cm>=30)return 8;if(cm>=26)return 7;if(cm>=22)return 6;if(cm>=18)return 5;if(cm>=14)return 3;if(cm>=10)return 2;if(cm>=6)return 1;return 0}
+    if(bauteil==="fassade"){if(cm>=24)return 7;if(cm>=20)return 6;if(cm>=16)return 5;if(cm>=12)return 3;if(cm>=8)return 2;if(cm>=5)return 1;return 0}
+    if(bauteil==="keller"){if(cm>=16)return 5;if(cm>=12)return 4;if(cm>=10)return 3;if(cm>=8)return 2;if(cm>=5)return 1;return 0}
+    return 0;
+  }
+  const dc=zahlAusText(feldwert("dach_daemmstaerke")),fc=zahlAusText(feldwert("fassade_daemmstaerke")),kc=zahlAusText(feldwert("kellerdecke_daemmstaerke"));
+  w-=zusatzAbzugDaemmstaerke(dc,"dach");
+  w-=zusatzAbzugDaemmstaerke(fc,"fassade");
+  w-=zusatzAbzugDaemmstaerke(kc,"keller");
+  if(w<28)w=28;
+  if(w>145)w=145;
+  let hf=fl*w/1000,hv=0;
+  if(verbrauch){
+    let kwh=verbrauch;
+    const t=feldwert("verbrauch").toLowerCase();
+    if(t.includes("öl")||t.includes("l"))kwh=verbrauch*10;
+    hv=kwh/2200;
+  }
+  let erg=hf,methode="nach Baujahr, Fläche, Sanierungszustand und Dämmstärken";
+  if(hv>0){erg=(hf+hv)/2;methode="Mittelwert aus Flächenansatz und Verbrauchsansatz"}
+  const r=Math.round(erg*10)/10,min=Math.round(r*.85*10)/10,max=Math.round(r*1.15*10)/10;
+  let bew="Wärmepumpe grundsätzlich prüfbar.";
+  if(r>14)bew="Erhöhte Heizlast: Auslegung, Heizflächen und Vorlauftemperatur genau prüfen.";
+  if(zahlAusText(feldwert("vorlauftemperatur"))>55)bew+=" Vorlauftemperatur kritisch: Heizkörper / hydraulischen Abgleich prüfen.";
+  const ergebnisFeld=document.getElementById("heizlast_ergebnis");
+  if(ergebnisFeld){
+    ergebnisFeld.value=`Überschlägige Heizlast: ca. ${r} kW
+Plausibler Bereich: ca. ${min} bis ${max} kW
+Ansatz: ${methode}
+Angenommener Kennwert: ca. ${Math.round(w)} W/m²
+Dämmstärken berücksichtigt: Dach ${dc||"-"} cm, Fassade ${fc||"-"} cm, Kellerdecke ${kc||"-"} cm
+Bewertung: ${bew}
+
+Hinweis: Nur Vorabschätzung für die Angebotserstellung. Keine Heizlastberechnung nach DIN EN 12831.`;
+  }
+  const rohrHeizlastFeld=document.getElementById("rohrcheck_heizlast");
+  if(rohrHeizlastFeld){rohrHeizlastFeld.value=r}
+  speichernOhneMeldung();
+}
+
+
+
+const ziegelDatenbank={
+  braas_frankfurter:{name:"Braas Frankfurter Pfanne / Betonpfanne",deckBreiteCm:30.0,deckLaengeCm:32.9,bedarf:"ca. 10,0 Stk./m²",hinweis:"Decklänge Mittelwert aus 31,2–34,5 cm"},
+  creaton_magnum:{name:"Creaton Magnum",deckBreiteCm:29.6,deckLaengeCm:40.0,bedarf:"ca. 8,2–8,7 Stk./m²",hinweis:"Decklänge Mittelwert aus 39,0–41,1 cm"},
+  braas_turmalin:{name:"Braas Turmalin",deckBreiteCm:24.0,deckLaengeCm:36.8,bedarf:"ca. 11,0–11,7 Stk./m²",hinweis:"Decklänge Mittelwert aus 35,5–38,0 cm"},
+  nelskamp_r13s:{name:"Nelskamp R 13 S",deckBreiteCm:21.4,deckLaengeCm:33.8,bedarf:"ca. 12,8–15,1 Stk./m²",hinweis:"Decklänge Mittelwert aus 31,0–36,5 cm"},
+  braas_granat_11v:{name:"Braas Granat 11V",deckBreiteCm:23.0,deckLaengeCm:35.9,bedarf:"ca. 11,4–12,9 Stk./m²",hinweis:"Decklänge Mittelwert aus 33,8–38,0 cm"},
+  laumans_tiefa_xltop:{name:"Laumans Tiefa XLTOP",deckBreiteCm:23.0,deckLaengeCm:35.0,bedarf:"ab ca. 12,2 Stk./m²",hinweis:"Decklänge Mittelwert aus 34,0–36,0 cm"},
+  creaton_klassik_biber:{name:"Creaton Klassik Biberschwanz",deckBreiteCm:18.0,deckLaengeCm:15.5,bedarf:"ca. 34,0–38,0 Stk./m²",hinweis:"Decklänge Mittelwert aus 14,5–16,5 cm"}
+};
+
+function pvSetDachMethode(){
+  const methode = feldwert("pv_dach_methode") || "manual";
+  ["manual","ziegel","zeichnung","foto"].forEach(function(m){
+    const el=document.getElementById("pv_method_"+m);
+    if(el) el.style.display = (m===methode ? "block" : "none");
+  });
+}
+function pvDachflaecheManuellUebernehmen(){
+  const flaeche=zahlAusText(feldwert("pv_dachflaeche_manuell"));
+  const out=document.getElementById("pv_dachflaeche_ergebnis");
+  const dachflaecheFeld=document.getElementById("dachflaeche");
+  if(!flaeche){alert("Bitte die manuelle Dachfläche in m² eintragen.");return;}
+  if(dachflaecheFeld)dachflaecheFeld.value=pvRound(flaeche);
+  const k=pvPvKennzahlen(flaeche);
+  if(out){out.value="Dachfläche manuell übernommen\n"+
+    "Manuelle Dachfläche: ca. "+pvRound(flaeche)+" m²\n"+
+    "Konservativ belegbare Fläche: ca. "+pvRound(k.belegbar)+" m²\n"+
+    "Grobe Modulanzahl: ca. "+k.module+" Module\n"+
+    "Grobe Leistung: ca. "+k.kwp+" kWp\n\n"+
+    "Hinweis: Dieser Wert wurde direkt aus der manuellen Eingabe übernommen.";}
+  pvBerechnen();
+  speichernOhneMeldung();
+}
+
+function pvZiegelStandardUebernehmen(){const standard=feldwert("pv_ziegel_standard");const b=document.getElementById("pv_ziegel_breite_cm");const h=document.getElementById("pv_ziegel_hoehe_cm");const bedarf=document.getElementById("pv_ziegel_bedarf_m2");const dacheindeckung=document.getElementById("dacheindeckung");if(!standard){if(bedarf)bedarf.value="";speichernOhneMeldung();return;}const daten=ziegelDatenbank[standard];if(!daten)return;if(b)b.value=String(daten.deckBreiteCm).replace(".",",");if(h)h.value=String(daten.deckLaengeCm).replace(".",",");if(bedarf)bedarf.value=daten.bedarf;if(dacheindeckung&&!dacheindeckung.value)dacheindeckung.value=daten.name;speichernOhneMeldung();}
+function pvZiegelName(){const standard=feldwert("pv_ziegel_standard");return standard&&ziegelDatenbank[standard]?ziegelDatenbank[standard].name:"Eigener Ziegel / unbekannt";}
+function pvZiegelHinweis(){const standard=feldwert("pv_ziegel_standard");return standard&&ziegelDatenbank[standard]?ziegelDatenbank[standard].hinweis:"Manuell eingetragenes Deckmaß";}
+function pvZiegelBasisFlaeche(){
+  const breiteCm=zahlAusText(feldwert("pv_ziegel_breite_cm"));
+  const hoeheCm=zahlAusText(feldwert("pv_ziegel_hoehe_cm"));
+  const abzug=zahlAusText(feldwert("pv_ziegel_abzug"));
+  if(!breiteCm||!hoeheCm)return null;
+  const deckFlaecheM2=(breiteCm/100)*(hoeheCm/100);
+  let teilflaechen=[];
+  for(let i=1;i<=4;i++){
+    const form=feldwert("pv_ziegel_f"+i+"_form");
+    if(!form)continue;
+    const unten=zahlAusText(feldwert("pv_ziegel_f"+i+"_unten"));
+    const oben=zahlAusText(feldwert("pv_ziegel_f"+i+"_oben"));
+    const hoehe=zahlAusText(feldwert("pv_ziegel_f"+i+"_hoehe"));
+    const anzahl=zahlAusText(feldwert("pv_ziegel_f"+i+"_anzahl"))||1;
+    const notiz=feldwert("pv_ziegel_f"+i+"_notiz");
+    if(!unten||!hoehe)continue;
+    let ziegelEinheiten=0;
+    if(form==="trapez"){
+      const obenWert=oben||unten;
+      ziegelEinheiten=((unten+obenWert)/2)*hoehe;
+    }else if(form==="dreieck"){
+      ziegelEinheiten=(unten*hoehe)/2;
+    }else{
+      ziegelEinheiten=unten*hoehe;
+    }
+    const flaeche=ziegelEinheiten*deckFlaecheM2*anzahl;
+    teilflaechen.push({nr:i,form,unten,oben,hoehe,anzahl,notiz,ziegelEinheiten,flaeche});
+  }
+  if(!teilflaechen.length)return null;
+  const brutto=teilflaechen.reduce(function(sum,t){return sum+t.flaeche;},0);
+  return {breiteCm,hoeheCm,abzug,brutto,teilflaechen,deckFlaecheM2};
+}
+function pvPvKennzahlen(nutzbar){const belegbar=Math.max(0,nutzbar)*0.75;const module=Math.floor(belegbar/1.95);const kwp=Math.round(module*0.43*10)/10;return {belegbar,module,kwp};}
+function pvRound(n){return Math.round((n||0)*10)/10;}
+const pvMarkState={img:null,imgData:null,tool:"roof",roof:[],roofClosed:false,obstacle:[],obstacles:[],circles:[]};
+function pvCanvas(){return document.getElementById("pv_mark_canvas");}
+function pvStatus(){return document.getElementById("pv_mark_status");}
+function pvSetMarkTool(tool){pvMarkState.tool=tool;["toolRoof","toolObstacle","toolCircle"].forEach(function(id){const b=document.getElementById(id);if(b)b.classList.remove("activeTool")});const map={roof:"toolRoof",obstacle:"toolObstacle",circle:"toolCircle"};const b=document.getElementById(map[tool]);if(b)b.classList.add("activeTool");}
+function pvGetFirstDachFoto(){const pools=["elektroDachFotoPreview","elektroZeichnungPreview","elektroDachPreview"];for(const k of pools){if(photoStore[k]&&photoStore[k].length){const p=photoStore[k].find(x=>String(x.data).startsWith("data:image"));if(p)return p.data;}}return null;}
+function pvMarkFotoLaden(){const data=pvGetFirstDachFoto();if(!data){alert("Bitte zuerst ein Dachfoto oder eine Zeichnung als Bild hochladen. PDFs können in der Browser-App nicht direkt als Markierbild verwendet werden.");return;}const img=new Image();img.onload=function(){pvMarkState.img=img;pvMarkState.imgData=data;pvResetMarkierungen(false);pvDrawMarkCanvas();pvSetMarkTool("roof");pvUpdateMarkStatus();};img.src=data;}
+function pvResetMarkierungen(redraw=true){pvMarkState.roof=[];pvMarkState.roofClosed=false;pvMarkState.obstacle=[];pvMarkState.obstacles=[];pvMarkState.circles=[];if(redraw)pvDrawMarkCanvas();pvUpdateMarkStatus();}
+function pvUndoMarkPoint(){if(pvMarkState.tool==="obstacle"&&pvMarkState.obstacle.length){pvMarkState.obstacle.pop();}else if(pvMarkState.tool==="roof"&&pvMarkState.roof.length){pvMarkState.roof.pop();pvMarkState.roofClosed=false;}else if(pvMarkState.tool==="circle"&&pvMarkState.circles.length){pvMarkState.circles.pop();}pvDrawMarkCanvas();pvUpdateMarkStatus();}
+function pvCloseRoof(){if(!pvMarkState.roof||pvMarkState.roof.length<3){alert("Bitte die Dachfläche mit mindestens 3 Punkten markieren.");return;}pvMarkState.roofClosed=true;pvDrawMarkCanvas();pvUpdateMarkStatus();}
+function pvCloseObstacle(){if(!pvMarkState.obstacle||pvMarkState.obstacle.length<3){alert("Bitte für die Abzugsfläche mindestens 3 Punkte setzen.");return;}pvMarkState.obstacles.push(pvMarkState.obstacle.slice());pvMarkState.obstacle=[];pvDrawMarkCanvas();pvUpdateMarkStatus();}
+function pvCanvasPoint(evt){const c=pvCanvas();const r=c.getBoundingClientRect();const clientX=(evt.touches&&evt.touches[0]?evt.touches[0].clientX:evt.clientX);const clientY=(evt.touches&&evt.touches[0]?evt.touches[0].clientY:evt.clientY);return {x:(clientX-r.left)*(c.width/r.width),y:(clientY-r.top)*(c.height/r.height)};}
+function pvDrawPolyline(ctx,pts,color,closed,fill){if(!pts||!pts.length)return;ctx.strokeStyle=color;ctx.fillStyle=fill||color;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);if(closed&&pts.length>2)ctx.closePath();if(fill&&closed&&pts.length>2)ctx.fill();ctx.stroke();pts.forEach(function(p){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();});}
+function pvDrawMarkCanvas(){const c=pvCanvas();if(!c)return;const ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);if(pvMarkState.img){const img=pvMarkState.img;const scale=Math.min(c.width/img.width,c.height/img.height);const w=img.width*scale,h=img.height*scale,x=(c.width-w)/2,y=(c.height-h)/2;ctx.drawImage(img,x,y,w,h);}else{ctx.fillStyle="#f3f4f6";ctx.fillRect(0,0,c.width,c.height);ctx.fillStyle="#6b7280";ctx.font="20px Arial";ctx.fillText("Bitte Dachfoto laden",30,50);}pvDrawPolyline(ctx,pvMarkState.roof,"#059669",pvMarkState.roofClosed,"rgba(5,150,105,.16)");(pvMarkState.obstacles||[]).forEach(function(poly){pvDrawPolyline(ctx,poly,"#dc2626",true,"rgba(220,38,38,.22)")});pvDrawPolyline(ctx,pvMarkState.obstacle,"#dc2626",false);pvDrawCircles(ctx);}
+function pvDrawCircles(ctx){ctx.strokeStyle="#dc2626";ctx.fillStyle="#dc2626";ctx.lineWidth=4;(pvMarkState.circles||[]).forEach(function(c){if(!c.center)return;const r=c.edge?pvDist(c.center,c.edge):8;ctx.beginPath();ctx.arc(c.center.x,c.center.y,r,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(c.center.x,c.center.y,5,0,Math.PI*2);ctx.fill();if(c.edge){ctx.beginPath();ctx.arc(c.edge.x,c.edge.y,5,0,Math.PI*2);ctx.fill();}});}
+function pvFotoBasisFlaeche(){
+  const base=pvZiegelBasisFlaeche();
+  if(base){
+    return {
+      brutto:base.brutto,
+      abzug:base.abzug||0,
+      quelle:"Ziegelzählung",
+      detail:"Ziegeltyp: "+pvZiegelName()+" | Deckmaß ca. "+base.breiteCm+" × "+base.hoeheCm+" cm | Teilflächen: "+(base.teilflaechen?base.teilflaechen.length:1)
+    };
+  }
+  const uebernommen=zahlAusText(feldwert("dachflaeche"));
+  if(uebernommen){
+    return {brutto:uebernommen,abzug:0,quelle:"übernommene Dachfläche",detail:"Basis ist der Wert oben aus 'Ermittelte Dachfläche'."};
+  }
+  const manuell=zahlAusText(feldwert("pv_dachflaeche_manuell"));
+  if(manuell){
+    return {brutto:manuell,abzug:0,quelle:"manuelle Dachfläche",detail:"Basis ist die manuell eingetragene Dachfläche."};
+  }
+  return null;
+}
+function pvMarkCanvasClick(evt){if(!pvMarkState.img)return;evt.preventDefault();const pt=pvCanvasPoint(evt);if(pvMarkState.tool==="circle"){let last=pvMarkState.circles[pvMarkState.circles.length-1];if(!last||last.edge)pvMarkState.circles.push({center:pt,edge:null});else last.edge=pt;}else if(pvMarkState.tool==="obstacle"){pvMarkState.obstacle.push(pt);}else{if(pvMarkState.roofClosed){pvMarkState.roof=[];pvMarkState.roofClosed=false;}pvMarkState.roof.push(pt);}pvDrawMarkCanvas();pvUpdateMarkStatus();}
+function pvDist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function pvPolygonAreaPx(pts){if(!pts||pts.length<3)return 0;let sum=0;for(let i=0;i<pts.length;i++){const p=pts[i],q=pts[(i+1)%pts.length];sum+=p.x*q.y-q.x*p.y;}return Math.abs(sum)/2;}
+function pvCircleAreaPx(c){if(!c||!c.center||!c.edge)return 0;const r=pvDist(c.center,c.edge);return Math.PI*r*r;}
+function pvMarkAbzugPx(){const poly=(pvMarkState.obstacles||[]).reduce(function(sum,p){return sum+pvPolygonAreaPx(p)},0);const current=pvPolygonAreaPx(pvMarkState.obstacle);const circles=(pvMarkState.circles||[]).reduce(function(sum,c){return sum+pvCircleAreaPx(c)},0);return poly+current+circles;}
+function pvUpdateMarkStatus(){
+  const box=pvStatus();
+  if(!box)return;
+  const base=pvFotoBasisFlaeche();
+  const roofPx=pvPolygonAreaPx(pvMarkState.roof);
+  const abzugPx=pvMarkAbzugPx();
+  if(!pvMarkState.img){
+    box.innerText="Noch keine Foto-Markierung berechnet.";
+    return;
+  }
+  if(!roofPx){
+    box.innerText="Foto geladen. Bitte Dachfläche markieren und anschließend 'Dachfläche abschließen' klicken.";
+    return;
+  }
+  if(!base){
+    box.innerText="Markierte Dachfläche: "+Math.round(roofPx)+" Bildpunkte. Für m² bitte zuerst eine Basisfläche übernehmen: manuell, aus Ziegeln oder aus Zeichnung/Maßen.";
+    return;
+  }
+  const markBrutto=base.brutto;
+  const abzugM2=roofPx>0?abzugPx/roofPx*markBrutto:0;
+  const manuell=base.abzug||0;
+  const nutzbar=Math.max(0,markBrutto-abzugM2-manuell);
+  box.innerText="Foto-Basis: "+base.quelle+"\n"+
+    "Markierte Dachfläche: ca. "+pvRound(markBrutto)+" m²\n"+
+    "Markierte Abzüge: ca. "+pvRound(abzugM2)+" m²\n"+
+    "Zusätzlicher manueller Abzug: ca. "+pvRound(manuell)+" m²\n"+
+    "Nutzbare Fläche nach Foto-Markierung: ca. "+pvRound(nutzbar)+" m²";
+}
+function pvFlaecheAusFotoMarkierungBerechnen(){
+  const out=document.getElementById("pv_dachflaeche_ergebnis");
+  if(!pvMarkState.img){alert("Bitte zuerst ein Foto in die Markierfläche laden.");return;}
+  if(pvMarkState.roof.length<3){alert("Bitte die Dachfläche mit mindestens 3 Punkten markieren.");return;}
+  if(!pvMarkState.roofClosed)pvCloseRoof();
+  const base=pvFotoBasisFlaeche();
+  if(!base){alert("Bitte zuerst eine m²-Basis übernehmen: manuelle Dachfläche, Dachfläche aus Ziegeln oder Dachfläche aus Zeichnung/Maßen.");return;}
+  const roofPx=pvPolygonAreaPx(pvMarkState.roof);
+  const abzugM2=roofPx>0?pvMarkAbzugPx()/roofPx*base.brutto:0;
+  const manuell=base.abzug||0;
+  const nutzbar=Math.max(0,base.brutto-abzugM2-manuell);
+  const k=pvPvKennzahlen(nutzbar);
+  const dachflaecheFeld=document.getElementById("dachflaeche");
+  if(dachflaecheFeld)dachflaecheFeld.value=pvRound(nutzbar);
+  if(out){out.value="Dachfläche aus Foto-Markierung überschlägig ermittelt\n"+
+    "Basis: "+base.quelle+"\n"+
+    "Details: "+base.detail+"\n"+
+    "Markierte Dachfläche / Brutto-Basis: ca. "+pvRound(base.brutto)+" m²\n"+
+    "Markierte Abzüge: ca. "+pvRound(abzugM2)+" m²\n"+
+    "Zusätzlicher manueller Abzug: ca. "+pvRound(manuell)+" m²\n"+
+    "Nutzbare Dachfläche für PV-Abschätzung: ca. "+pvRound(nutzbar)+" m²\n"+
+    "Konservativ belegbare Fläche: ca. "+pvRound(k.belegbar)+" m²\n"+
+    "Grobe Modulanzahl: ca. "+k.module+" Module\n"+
+    "Grobe Leistung: ca. "+k.kwp+" kWp\n\n"+
+    "Hinweis: Das Foto liefert ohne Maßstab keine eigenen m². Die Markierung nutzt die vorher übernommene Basisfläche und zieht Hindernisse anteilig ab.";}
+  pvUpdateMarkStatus();
+  try{photoStore["elektroZeichnungPreview"]=photoStore["elektroZeichnungPreview"]||[];photoStore["elektroZeichnungPreview"].push({gruppe:"PV Foto-Markierung",name:"pv_markierung.png",data:pvCanvas().toDataURL("image/png")});}catch(e){}
+  pvBerechnen();
+  speichernOhneMeldung();
+}
+function pvFlaecheAusZiegelnBerechnen(){
+  const base=pvZiegelBasisFlaeche();
+  const out=document.getElementById("pv_dachflaeche_ergebnis");
+  const dachflaecheFeld=document.getElementById("dachflaeche");
+  if(!base){alert("Bitte Ziegeltyp/Deckmaß und mindestens eine Teilfläche mit Form, Ziegelbreite unten und Ziegelhöhe eintragen.");return;}
+  let nutzbar=base.brutto-base.abzug;
+  if(nutzbar<0)nutzbar=0;
+  const k=pvPvKennzahlen(nutzbar);
+  if(dachflaecheFeld)dachflaecheFeld.value=pvRound(nutzbar);
+  let details="";
+  (base.teilflaechen||[]).forEach(function(t){
+    details+="Fläche "+t.nr+" ("+t.form+")"+(t.notiz?" - "+t.notiz:"")+": ";
+    if(t.form==="trapez")details+="unten "+t.unten+", oben "+(t.oben||t.unten)+", Höhe "+t.hoehe+" Ziegel";
+    else if(t.form==="dreieck")details+="unten "+t.unten+", Höhe "+t.hoehe+" Ziegel";
+    else details+=t.unten+" × "+t.hoehe+" Ziegel";
+    details+=", Anzahl gleiche Flächen "+t.anzahl+" = ca. "+pvRound(t.flaeche)+" m²\n";
+  });
+  if(out){out.value="Dachfläche aus Ziegel-Teilflächen überschlägig ermittelt\n"+
+    "Ziegeltyp: "+pvZiegelName()+"\n"+
+    "Ziegel-Deckmaß: ca. "+base.breiteCm+" × "+base.hoeheCm+" cm\n"+
+    "Hinweis Deckmaß: "+pvZiegelHinweis()+"\n"+
+    "\nTeilflächen:\n"+details+
+    "\nBrutto-Dachfläche: ca. "+pvRound(base.brutto)+" m²\n"+
+    "Manueller Abzug: ca. "+pvRound(base.abzug||0)+" m²\n"+
+    "Nutzbare Dachfläche für PV-Abschätzung: ca. "+pvRound(nutzbar)+" m²\n"+
+    "Konservativ belegbare Fläche: ca. "+pvRound(k.belegbar)+" m²\n"+
+    "Grobe Modulanzahl: ca. "+k.module+" Module\n"+
+    "Grobe Leistung: ca. "+k.kwp+" kWp\n\n"+
+    "Hinweis: Bei Gauben, Trapezen oder Versätzen das Dach in mehrere einfache Teilflächen aufteilen und addieren lassen.";}
+  pvUpdateMarkStatus();
+  pvBerechnen();
+  speichernOhneMeldung();
+}
+
+function pvFlaecheAusMassenBerechnen(){
+  const laenge=zahlAusText(feldwert("pv_gebaeudelaenge"));
+  const breite=zahlAusText(feldwert("pv_gebaeudebreite"));
+  const ueberstand=zahlAusText(feldwert("pv_dachueberstand"));
+  const abzugsflaeche=zahlAusText(feldwert("pv_abzugsflaeche"));
+  const dachform=feldwert("pv_dachform");
+  const anzahl=zahlAusText(feldwert("pv_anzahl_dachflaechen")) || 1;
+  const neigung=zahlAusText(feldwert("dachneigung"));
+  const out=document.getElementById("pv_dachflaeche_ergebnis");
+  const dachflaecheFeld=document.getElementById("dachflaeche");
+
+  const hatZeichnung=(photoStore["elektroZeichnungPreview"]&&photoStore["elektroZeichnungPreview"].length>0);
+  if(!hatZeichnung && feldwert("pv_zeichnungen_vorhanden")==="Ja"){
+    alert("Bitte zuerst die Zeichnung einlesen oder die Auswahl 'Bauzeichnungen vorhanden?' anpassen.");
+    return;
+  }
+  if(!laenge || !breite){
+    alert("Bitte zuerst Zeichnung einlesen bzw. Maße aus der Zeichnung übernehmen und mindestens Gebäudelänge und Gebäudebreite eintragen.");
+    return;
+  }
+
+  const laengeMitUeberstand=laenge+(2*ueberstand);
+  const breiteMitUeberstand=breite+(2*ueberstand);
+  let grundflaeche=laengeMitUeberstand*breiteMitUeberstand;
+  let brutto=grundflaeche;
+  let methode="Grundfläche aus Länge × Breite";
+
+  if(dachform==="Satteldach" || dachform==="Walmdach"){
+    const halbeBreite=breiteMitUeberstand/2;
+    let schraegfaktor=1;
+    if(neigung>0){
+      const rad=neigung*Math.PI/180;
+      schraegfaktor=1/Math.cos(rad);
+    }
+    const eineDachseite=laengeMitUeberstand*halbeBreite*schraegfaktor;
+    const nutzbareSeiten=Math.min(Math.max(anzahl,1),2);
+    brutto=eineDachseite*nutzbareSeiten;
+    methode="Satteldach/Walmdach: Trauflänge × halbe Gebäudebreite × Neigungsfaktor × nutzbare Dachflächen";
+  }else if(dachform==="Pultdach"){
+    let schraegfaktor=1;
+    if(neigung>0){
+      const rad=neigung*Math.PI/180;
+      schraegfaktor=1/Math.cos(rad);
+    }
+    brutto=grundflaeche*schraegfaktor;
+    methode="Pultdach: Grundfläche × Neigungsfaktor";
+  }else if(dachform==="Flachdach"){
+    brutto=grundflaeche;
+    methode="Flachdach: Grundfläche ohne Neigungszuschlag";
+  }else{
+    if(neigung>0){
+      const rad=neigung*Math.PI/180;
+      brutto=grundflaeche*(1/Math.cos(rad));
+      methode="Unklare Dachform: Grundfläche × Neigungsfaktor";
+    }
+  }
+
+  let nutzbar=brutto-abzugsflaeche;
+  if(nutzbar<0)nutzbar=0;
+
+  const modulFlaeche=1.95;
+  const belegungsfaktor=0.75;
+  const belegbareFlaeche=nutzbar*belegungsfaktor;
+  const module=Math.floor(belegbareFlaeche/modulFlaeche);
+  const kwp=Math.round(module*0.43*10)/10;
+
+  const bruttoR=Math.round(brutto*10)/10;
+  const nutzbarR=Math.round(nutzbar*10)/10;
+  const belegbarR=Math.round(belegbareFlaeche*10)/10;
+
+  if(dachflaecheFeld){
+    dachflaecheFeld.value=nutzbarR;
+  }
+
+  if(out){
+    out.value=
+      "Dachfläche aus Zeichnung / Maßen überschlägig ermittelt\n"+
+      "Methode: "+methode+"\n"+
+      "Dachform: "+(dachform||"nicht angegeben")+"\n"+
+      "Gebäudelänge inkl. Überstand: ca. "+Math.round(laengeMitUeberstand*10)/10+" m\n"+
+      "Gebäudebreite inkl. Überstand: ca. "+Math.round(breiteMitUeberstand*10)/10+" m\n"+
+      "Dachneigung: "+(neigung||"-")+" °\n"+
+      "Brutto-Dachfläche: ca. "+bruttoR+" m²\n"+
+      "Abzugsfläche: ca. "+(abzugsflaeche||0)+" m²\n"+
+      "Nutzbare Dachfläche für PV-Abschätzung: ca. "+nutzbarR+" m²\n"+
+      "Konservativ belegbare Fläche: ca. "+belegbarR+" m²\n"+
+      "Grobe Modulanzahl: ca. "+module+" Module\n"+
+      "Grobe Leistung: ca. "+kwp+" kWp\n\n"+
+      "Hinweis: Nur Vorabschätzung. Dachfenster, Gauben, Randabstände, Statik, Brandschutzabstände, Verschattung und konkrete Modulbelegung separat prüfen.";
+  }
+
+  pvBerechnen();
+  speichernOhneMeldung();
+}
+
+function pvBerechnen(){const dach=zahlAusText(feldwert("dachflaeche")),aus=feldwert("dachausrichtung").toLowerCase(),ver=feldwert("verschattung");if(!dach){alert("Bitte zuerst die Dachfläche eintragen.");return}let f=1,h=[];if(aus.includes("süd"))h.push("Südausrichtung: sehr gut geeignet.");else if(aus.includes("ost")||aus.includes("west")){f*=.9;h.push("Ost-/West-Ausrichtung: gut geeignet, etwas geringerer Ertrag als Süd.")}else if(aus.includes("nord")){f*=.6;h.push("Nordausrichtung: kritisch prüfen.")}else h.push("Ausrichtung unklar: konservativer Richtwert verwendet.");if(ver==="Ja"){f*=.75;h.push("Verschattung vorhanden: deutlicher Abschlag berücksichtigt.")}else if(ver==="Teilweise"){f*=.88;h.push("Teilweise Verschattung: Abschlag berücksichtigt.")}else if(ver==="Nein")h.push("Keine erkennbare Verschattung angegeben.");const kwp=Math.round((dach/6)*f*10)/10,min=Math.round((dach/7)*f*10)/10,max=Math.round((dach/5)*f*10)/10;document.getElementById("pv_ergebnis").value="Überschlägiges PV-Potenzial: ca. "+kwp+" kWp\nPlausibler Bereich: ca. "+min+" bis "+max+" kWp\nAnsatz: ca. 5 bis 7 m² Dachfläche pro 1 kWp, Mittelwert 6 m²/kWp.\nDachfläche: "+dach+" m²\nKorrekturfaktor aus Ausrichtung/Verschattung: ca. "+Math.round(f*100)+" %\nHinweise: "+h.join(" ")+"\n\nHinweis: Nur grobe Vorabschätzung. Belegung, Statik, Randabstände, Gauben, Dachfenster und Netzanschluss separat prüfen.";speichernOhneMeldung()}
+
+function heizlastAusErgebnisOderFeld(){
+  const manuell=zahlAusText(feldwert("rohrcheck_heizlast"));
+  if(manuell>0)return manuell;
+  const ergebnis=feldwert("heizlast_ergebnis");
+  const match=String(ergebnis).replace(",",".").match(/Heizlast:\s*ca\.\s*([0-9]+(\.[0-9]+)?)/i);
+  if(match){
+    const wert=parseFloat(match[1]);
+    const rohrHeizlastFeld=document.getElementById("rohrcheck_heizlast");
+    if(rohrHeizlastFeld){rohrHeizlastFeld.value=wert;}
+    return wert;
+  }
+  return 0;
+}
+
+function rohrdimensionAusAussendurchmesser(){
+  const wertMm=zahlAusText(feldwert("rohr_aussendurchmesser"));
+  const hinweis=document.getElementById("rohrmessung_hinweis");
+  const select=document.getElementById("rohrcheck_dimension");
+
+  if(!wertMm){
+    alert("Bitte den gemessenen Außendurchmesser in mm eintragen.");
+    return;
+  }
+
+  const optionen=[
+    {key:"cu15",name:"Kupferrohr 15 mm",ad:15,material:"Kupferrohr"},
+    {key:"cu18",name:"Kupferrohr 18 mm",ad:18,material:"Kupferrohr"},
+    {key:"cu22",name:"Kupferrohr 22 mm",ad:22,material:"Kupferrohr"},
+    {key:"cu28",name:"Kupferrohr 28 mm",ad:28,material:"Kupferrohr"},
+    {key:"cu35",name:"Kupferrohr 35 mm",ad:35,material:"Kupferrohr"},
+    {key:"cu42",name:"Kupferrohr 42 mm",ad:42,material:"Kupferrohr"},
+    {key:"cu54",name:"Kupferrohr 54 mm",ad:54,material:"Kupferrohr"},
+    {key:"cu64",name:"Kupferrohr 64 mm",ad:64,material:"Kupferrohr"},
+    {key:"msvr16",name:"Aluverbundrohr 16 x 2",ad:16,material:"Aluverbundrohr"},
+    {key:"msvr20",name:"Aluverbundrohr 20 x 2",ad:20,material:"Aluverbundrohr"},
+    {key:"msvr26",name:"Aluverbundrohr 26 x 3",ad:26,material:"Aluverbundrohr"},
+    {key:"msvr32",name:"Aluverbundrohr 32 x 3",ad:32,material:"Aluverbundrohr"},
+    {key:"msvr40",name:"Aluverbundrohr 40 x 3,5",ad:40,material:"Aluverbundrohr"},
+    {key:"msvr50",name:"Aluverbundrohr 50 x 4,5",ad:50,material:"Aluverbundrohr"},
+    {key:"msvr63",name:"Aluverbundrohr 63 x 6",ad:63,material:"Aluverbundrohr"},
+    {key:"stahl15",name:"Stahlrohr DN15 / 1/2 Zoll",ad:21.3,material:"Stahlrohr"},
+    {key:"stahl20",name:"Stahlrohr DN20 / 3/4 Zoll",ad:26.9,material:"Stahlrohr"},
+    {key:"stahl25",name:"Stahlrohr DN25 / 1 Zoll",ad:33.7,material:"Stahlrohr"},
+    {key:"stahl32",name:"Stahlrohr DN32 / 1 1/4 Zoll",ad:42.4,material:"Stahlrohr"},
+    {key:"stahl40",name:"Stahlrohr DN40 / 1 1/2 Zoll",ad:48.3,material:"Stahlrohr"},
+    {key:"stahl50",name:"Stahlrohr DN50 / 2 Zoll",ad:60.3,material:"Stahlrohr"},
+    {key:"stahl65",name:"Stahlrohr DN65 / 2 1/2 Zoll",ad:76.1,material:"Stahlrohr"}
+  ];
+
+  optionen.forEach(function(o){
+    o.diff=Math.abs(o.ad-wertMm);
+  });
+  optionen.sort(function(a,b){return a.diff-b.diff;});
+
+  const beste=optionen[0];
+  const treffer=optionen.filter(function(o){return o.diff<=1.5;});
+  const nahe=optionen.slice(0,4);
+
+  if(select && beste && beste.diff<=1.5){
+    select.value=beste.key;
+  }
+
+  let klasse="ampelGruen";
+  let text="📏 Gemessener Außendurchmesser: ca. "+wertMm+" mm\n";
+
+  if(beste.diff<=0.8){
+    text+="Sehr wahrscheinliche Dimension: "+beste.name+" (Außendurchmesser ca. "+beste.ad+" mm).";
+  }else if(beste.diff<=1.5){
+    klasse="ampelGelb";
+    text+="Nächste passende Dimension: "+beste.name+" (Außendurchmesser ca. "+beste.ad+" mm). Bitte Material am Rohr prüfen.";
+  }else{
+    klasse="ampelRot";
+    text+="Keine eindeutige Dimension gefunden. Bitte Messwert, Rohrmaterial und Beschriftung am Rohr prüfen.";
+  }
+
+  if(treffer.length>1){
+    text+="\nMögliche Treffer: "+treffer.map(function(o){return o.name+" ("+o.ad+" mm)";}).join(", ")+".";
+  }else{
+    text+="\nNächste Vergleichswerte: "+nahe.map(function(o){return o.name+" ("+o.ad+" mm)";}).join(", ")+".";
+  }
+
+  text+="\nHinweis: Der Außendurchmesser allein ist bei manchen Rohrarten nicht eindeutig. Wenn möglich Material, Beschriftung oder Wandstärke mit prüfen.";
+
+  if(hinweis){
+    hinweis.className="ampelBox "+klasse;
+    hinweis.innerText=text;
+  }
+
+  speichernOhneMeldung();
+}
+
+function rohrdimensionPruefen(){
+  const heizlast=heizlastAusErgebnisOderFeld();
+  const dim=feldwert("rohrcheck_dimension");
+  const spreizung=zahlAusText(feldwert("rohrcheck_spreizung"));
+  const amp=document.getElementById("rohrcheck_ampel");
+  const out=document.getElementById("rohrcheck_ergebnis");
+  if(!heizlast){alert("Bitte Heizlast eintragen oder vorher die Heizlast überschlägig berechnen.");return}
+  if(!dim){alert("Bitte Rohrmaterial / Dimension auswählen.");return}
+  if(!spreizung){alert("Bitte Spreizung auswählen.");return}
+  const daten={
+    cu15:{name:"Kupferrohr 15 mm",di:13},cu18:{name:"Kupferrohr 18 mm",di:16},cu22:{name:"Kupferrohr 22 mm",di:20},cu28:{name:"Kupferrohr 28 mm",di:26},cu35:{name:"Kupferrohr 35 mm",di:33},cu42:{name:"Kupferrohr 42 mm",di:40},cu54:{name:"Kupferrohr 54 mm",di:52},cu64:{name:"Kupferrohr 64 mm",di:62},
+    msvr16:{name:"Aluverbundrohr 16 x 2",di:12},msvr20:{name:"Aluverbundrohr 20 x 2",di:16},msvr26:{name:"Aluverbundrohr 26 x 3",di:20},msvr32:{name:"Aluverbundrohr 32 x 3",di:26},msvr40:{name:"Aluverbundrohr 40 x 3,5",di:33},msvr50:{name:"Aluverbundrohr 50 x 4,5",di:41},msvr63:{name:"Aluverbundrohr 63 x 6",di:51},
+    stahl15:{name:"Stahlrohr DN15 / 1/2 Zoll",di:16},stahl20:{name:"Stahlrohr DN20 / 3/4 Zoll",di:21},stahl25:{name:"Stahlrohr DN25 / 1 Zoll",di:27},stahl32:{name:"Stahlrohr DN32 / 1 1/4 Zoll",di:35},stahl40:{name:"Stahlrohr DN40 / 1 1/2 Zoll",di:41},stahl50:{name:"Stahlrohr DN50 / 2 Zoll",di:53},stahl65:{name:"Stahlrohr DN65 / 2 1/2 Zoll",di:68}
+  };
+  const d=daten[dim];
+  const volumenstrom=heizlast/(1.163*spreizung);
+  const diMeter=d.di/1000;
+  const flaeche=Math.PI*Math.pow(diMeter/2,2);
+  const geschwindigkeit=(volumenstrom/3600)/flaeche;
+  let status="GRÜN",klasse="ampelGruen",bewertung="Die Rohrdimension wirkt für diese überschlägige Vorprüfung gut geeignet.";
+  if(geschwindigkeit>1.0){status="ROT";klasse="ampelRot";bewertung="Die Rohrdimension wirkt kritisch. Größere Rohrdimension, geringeren Druckverlust und Pumpenleistung genau prüfen."}
+  else if(geschwindigkeit>0.7){status="GELB";klasse="ampelGelb";bewertung="Die Rohrdimension ist grenzwertig. Bei Wärmepumpen, längeren Leitungen, vielen Bögen oder hohen Druckverlusten größere Dimension prüfen."}
+  if(amp){amp.className="ampelBox "+klasse;amp.innerText="🚦 "+status+" – "+bewertung}
+  const text="Rohrdimension-Check\n"+"Heizlast: ca. "+(Math.round(heizlast*10)/10)+" kW\n"+"Spreizung: "+spreizung+" K\n"+"Erforderlicher Volumenstrom: ca. "+(Math.round(volumenstrom*100)/100)+" m³/h\n"+"Rohrdimension: "+d.name+"\n"+"Angenommener Innendurchmesser: ca. "+d.di+" mm\n"+"Berechnete Strömungsgeschwindigkeit: ca. "+(Math.round(geschwindigkeit*100)/100)+" m/s\n"+"Ampelbewertung: "+status+"\n"+"Bewertung: "+bewertung+"\n\n"+"Hinweis: Das ist nur eine Vorprüfung. Eine vollständige Rohrnetzberechnung berücksichtigt zusätzlich Leitungslängen, Bögen, Armaturen, Ventile, Wärmetauscher, Pumpenkennlinie und zulässige Druckverluste.";
+  if(out)out.value=text;
+  speichernOhneMeldung();
+}
+
+function addText(doc,text,x,y,maxWidth,lineHeight){const lines=doc.splitTextToSize(text||"-",maxWidth);lines.forEach(function(line){if(y>280){doc.addPage();y=20}doc.text(line,x,y);y+=lineHeight});return y}
+function addSection(doc,title,rows,y){if(y>255){doc.addPage();y=16}doc.setFont("helvetica","bold");doc.setFontSize(13);doc.text(title,14,y);y+=7;doc.setFont("helvetica","normal");doc.setFontSize(10);rows.forEach(function(row){y=addText(doc,row[0]+": "+(feldwert(row[1])||"-"),14,y,180,5)});return y+5}
+function addPhotosToPdf(doc,groups){let all=[];groups.forEach(function(k){if(photoStore[k])photoStore[k].forEach(function(p){all.push(p)})});if(!all.length)return;doc.addPage();let y=16;doc.setFont("helvetica","bold");doc.setFontSize(15);doc.text("Fotos / eingelesene Dateien",14,y);y+=10;all.forEach(function(p,i){if(y>215){doc.addPage();y=16}doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text((i+1)+". "+p.gruppe,14,y);y+=5;doc.setFont("helvetica","normal");doc.setFontSize(9);doc.text("Datei: "+(p.name||"ohne Dateiname"),14,y);y+=5;if(String(p.data).startsWith("data:image")){try{doc.addImage(p.data,"JPEG",14,y,85,64)}catch(e){try{doc.addImage(p.data,"PNG",14,y,85,64)}catch(err){}}y+=67}else{doc.text("Hinweis: Diese Datei wurde eingelesen, kann aber im PDF nicht als Bild eingebettet werden.",14,y);y+=12}})}
+async function pdfErstellen(){syncAlleGemeinsamenFelder();const doc=new window.jspdf.jsPDF("p","mm","a4");let y=16;doc.setFont("helvetica","bold");doc.setFontSize(18);doc.text("Wärmepumpen-Checkliste Altbau / Neubau",14,y);y+=9;doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Erstellt am: "+new Date().toLocaleString("de-DE"),14,y);y+=10;y=addSection(doc,"1. Kundendaten",[["Name","name"],["Adresse","adresse"],["Telefon","telefon"],["E-Mail","email"],["Gebäudetyp","gebaeudetyp"],["Neubau / Bestand","neubau_bestand"],["Baujahr Gebäude","baujahr_gebaeude"],["Objektadresse","objektadresse"]],y);y=addSection(doc,"2. Energieverbrauch / aktuelle Heizung",[["Heizenergieverbrauch pro Jahr","verbrauch"],["Verbrauch 2. Jahr","verbrauch_jahr2"],["Verbrauch 3. Jahr","verbrauch_jahr3"],["Aktuelles Heizsystem","heizsystem_alt"],["Baujahr Heizung","baujahr_heizung"]],y);y=addSection(doc,"3. Gebäude",[["Wohnfläche","wohnflaeche"],["Beheizte Wohnfläche","beheizte_wohnflaeche"],["Wohneinheiten","wohneinheiten"],["Bewohner","bewohner"],["Dämmzustand allgemein","daemmung"],["Keller","keller"]],y);y=addSection(doc,"4. Heizsystem",[["Fußbodenheizung","fussbodenheizung"],["Heizkörper","heizkoerper_vorhanden"],["Ventile voreinstellbar","ventile_voreinstellbar"],["Vorlauftemperatur","vorlauftemperatur"]],y);y=addSection(doc,"5. Referenz-Heizkörper",[["HK1 Raum","hk1_raum"],["HK1 Größe / Typ","hk1_groesse"],["HK1 Art","hk1_art"],["HK1 Bemerkung","hk1_bemerkung"],["HK2 Raum","hk2_raum"],["HK2 Größe / Typ","hk2_groesse"],["HK2 Art","hk2_art"],["HK2 Bemerkung","hk2_bemerkung"],["HK3 Raum","hk3_raum"],["HK3 Größe / Typ","hk3_groesse"],["HK3 Art","hk3_art"],["HK3 Bemerkung","hk3_bemerkung"]],y);y=addSection(doc,"6. Hydraulik & Technik",[["Pumpentyp","pumpentyp"],["Pufferspeicher","pufferspeicher"],["Warmwasserspeicher","warmwasserspeicher"],["Heizlastberechnung","heizlastberechnung"],["Hydraulischer Abgleich","hydraulischer_abgleich"],["Rohrcheck Heizlast","rohrcheck_heizlast"],["Gemessener Außendurchmesser","rohr_aussendurchmesser"],["Rohrcheck Dimension","rohrcheck_dimension"],["Rohrcheck Spreizung","rohrcheck_spreizung"],["Rohrcheck Ergebnis","rohrcheck_ergebnis"]],y);y=addSection(doc,"7. Überschlag Heizlast",[["Fenster Zustand","fenster_erneuert"],["Dach Dämmzustand","dach_gedaemmt"],["Dämmstärke Dach","dach_daemmstaerke"],["Fassade Dämmzustand","fassade_gedaemmt"],["Dämmstärke Fassade","fassade_daemmstaerke"],["Kellerdecke Dämmzustand","kellerdecke_gedaemmt"],["Dämmstärke Kellerdecke","kellerdecke_daemmstaerke"],["Ergebnis Heizlast","heizlast_ergebnis"]],y);y=addSection(doc,"8. Notizen",[["Notizen","notizen"]],y);addPhotosToPdf(doc,["heizungPreview","gebaeudePreview","heizsystemPreview","hk1Preview","hk2Preview","hk3Preview","technikPreview","standortPreview","allgemeinPreview"]);const name=feldwert("name")||"Kunde";doc.save("Waermepumpen_Checkliste_"+name.replace(/[^a-z0-9äöüß\- ]/gi,"").replace(/\s+/g,"_")+".pdf")}
+async function pdfElektroErstellen(){syncAlleGemeinsamenFelder();const doc=new window.jspdf.jsPDF("p","mm","a4");let y=16;doc.setFont("helvetica","bold");doc.setFontSize(18);doc.text("Elektro / PV-Checkliste",14,y);y+=9;doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Erstellt am: "+new Date().toLocaleString("de-DE"),14,y);y+=10;y=addSection(doc,"1. Gemeinsame Objektdaten",[["Name","el_name"],["Objektadresse","el_objektadresse"],["Baujahr Gebäude","el_baujahr_gebaeude"],["Wohnfläche","el_wohnflaeche"],["Gebäudetyp","el_gebaeudetyp"],["Garage vorhanden","garage"]],y);y=addSection(doc,"2. Zählerschrank / Hausanschluss",[["Baujahr Zählerschrank","baujahr_zaehlerschrank"],["Erneuerung Zählerschrank","zaehlerschrank_erneuerung"],["Zählerschrankhöhe","zaehlerschrank_hoehe"],["Zählerschrankbreite","zaehlerschrank_breite"],["Zählerplätze","zaehlerplaetze"],["Unterverteilung / Multimedia","unterverteilung_multimedia"],["Baujahr HAK","baujahr_hak"],["HAK-Erneuerung","hak_erneuerung"],["Hauserdung","hauserdung"],["Hausanschlussleistung","hausanschlussleistung"]],y);y=addSection(doc,"3. PV / Dach",[["Dachfläche geeignet","dachflaeche_geeignet"],["Dachfläche","dachflaeche"],["Dachausrichtung","dachausrichtung"],["Dachneigung","dachneigung"],["Dacheindeckung","dacheindeckung"],["Verschattung","verschattung"],["Speicher gewünscht","speicher_gewuenscht"],["Wallbox gewünscht","wallbox_gewuenscht"]],y);y=addSection(doc,"4. Zeichnungen / Dachmaße für PV",[["Bauzeichnungen vorhanden","pv_zeichnungen_vorhanden"],["Dachzeichnung vorhanden","pv_dachzeichnung_vorhanden"],["Dachform","pv_dachform"],["Anzahl nutzbarer Dachflächen","pv_anzahl_dachflaechen"],["Gebäudelänge / Trauflänge","pv_gebaeudelaenge"],["Gebäudebreite","pv_gebaeudebreite"],["Dachüberstand","pv_dachueberstand"],["Abzugsfläche","pv_abzugsflaeche"],["Ziegeltyp","pv_ziegel_standard"],["Deckbreite cm","pv_ziegel_breite_cm"],["Decklänge cm","pv_ziegel_hoehe_cm"],["Ziegel waagerecht","pv_ziegel_anzahl_breite"],["Ziegel senkrecht","pv_ziegel_anzahl_hoehe"],["Dachflächen-Ergebnis","pv_dachflaeche_ergebnis"]],y);y=addSection(doc,"5. Leitungswege / Tiefbau / Außenbereich",[["Leitungsführung Gebäude","leitungsfuehrung_gebaeude"],["Kernbohrung erforderlich","kernbohrung_erforderlich"],["Kernbohrung Anzahl","kernbohrung_anzahl"],["Tiefbau Asphalt","tiefbau_asphalt"],["Tiefbau Pflasterung","tiefbau_pflasterung"],["Tiefbau Grünfläche","tiefbau_gruenflaeche"],["Zusätzliche Leitungslänge","leitung_meter"],["Hinweise Leitungslänge","leitung_meter_hinweis"]],y);y=addSection(doc,"6. PV-Potenzial",[["Ergebnis PV-Potenzial","pv_ergebnis"]],y);y=addSection(doc,"7. Notizen Elektro / PV",[["Notizen","elektro_notizen"]],y);addPhotosToPdf(doc,["elektroZaehlerschrankPreview","elektroDachPreview","elektroZeichnungPreview","elektroDachFotoPreview","elektroLeitungPreview"]);const name=feldwert("el_name")||feldwert("name")||"Kunde";doc.save("Elektro_PV_Checkliste_"+name.replace(/[^a-z0-9äöüß\- ]/gi,"").replace(/\s+/g,"_")+".pdf")}
+function labelVonFeld(id){
+  const f=document.getElementById(id);
+  if(!f)return id;
+  if(f.previousElementSibling&&f.previousElementSibling.tagName==="LABEL")return f.previousElementSibling.innerText;
+  return id;
+}
+function wert(id){
+  const v=feldwert(id);
+  return v?v:"-";
+}
+function mailAbschnitt(titel,felder){
+  let text="\n==============================\n"+titel+"\n==============================\n";
+  felder.forEach(function(item){
+    if(Array.isArray(item)){text+=item[0]+": "+wert(item[1])+"\n"}
+    else{text+=labelVonFeld(item)+": "+wert(item)+"\n"}
+  });
+  return text;
+}
+function datenAlsText(nurElektro){
+  let text=nurElektro?"ELEKTRO / PV-CHECKLISTE\n":"PROJEKT-CHECKLISTE WÄRMEPUMPE / ELEKTRO\n";
+  text+="Erstellt am: "+new Date().toLocaleString("de-DE")+"\n";
+  if(!nurElektro){
+    text+=mailAbschnitt("1. KUNDENDATEN",["name","adresse","telefon","email","gebaeudetyp","neubau_bestand","baujahr_gebaeude","objektadresse"]);
+    text+=mailAbschnitt("2. ENERGIEVERBRAUCH / AKTUELLE HEIZUNG",["verbrauch","verbrauch_jahr2","verbrauch_jahr3","heizsystem_alt","baujahr_heizung"]);
+    text+=mailAbschnitt("3. GEBÄUDE",["wohnflaeche","beheizte_wohnflaeche","wohneinheiten","bewohner","daemmung","keller"]);
+    text+=mailAbschnitt("4. WARMWASSER",["ww_waermepumpe","ww_bisher_heizung","anzahl_duschen","anzahl_badewannen","warmwasserkomfort","zirkulationspumpe"]);
+    text+=mailAbschnitt("5. HEIZSYSTEM",["fussbodenheizung","heizkoerper_vorhanden","ventile_voreinstellbar","vorlauftemperatur","fussbodenheizung_etage","heizkoerper_etage"]);
+    text+=mailAbschnitt("6. REFERENZ-HEIZKÖRPER",[["HK1 Raum","hk1_raum"],["HK1 Größe / Typ","hk1_groesse"],["HK1 Art","hk1_art"],["HK1 Bemerkung","hk1_bemerkung"],["HK2 Raum","hk2_raum"],["HK2 Größe / Typ","hk2_groesse"],["HK2 Art","hk2_art"],["HK2 Bemerkung","hk2_bemerkung"],["HK3 Raum","hk3_raum"],["HK3 Größe / Typ","hk3_groesse"],["HK3 Art","hk3_art"],["HK3 Bemerkung","hk3_bemerkung"]]);
+    text+=mailAbschnitt("7. HYDRAULIK & TECHNIK",["pumpentyp","pufferspeicher","warmwasserspeicher","heizlastberechnung","hydraulischer_abgleich",["Rohrcheck Heizlast","rohrcheck_heizlast"],["Gemessener Außendurchmesser","rohr_aussendurchmesser"],["Rohrcheck Dimension","rohrcheck_dimension"],["Rohrcheck Spreizung","rohrcheck_spreizung"],["Rohrcheck Ergebnis","rohrcheck_ergebnis"]]);
+    text+=mailAbschnitt("8. AUFSTELLORT WÄRMEPUMPE",["standort","grenzabstand","abstand_fenster","schallreflexion","fundament","leitungsweg"]);
+    text+=mailAbschnitt("9. HEIZLAST-ÜBERSCHLAG",["fenster_erneuert","dach_gedaemmt","dach_daemmstaerke","fassade_gedaemmt","fassade_daemmstaerke","kellerdecke_gedaemmt","kellerdecke_daemmstaerke","heizlast_ergebnis"]);
+    text+=mailAbschnitt("10. NOTIZEN",["notizen"]);
+  }
+  text+=mailAbschnitt("ELEKTRO 1. GEMEINSAME OBJEKTDATEN",["el_name","el_objektadresse","el_baujahr_gebaeude","el_wohnflaeche","el_gebaeudetyp","garage"]);
+  text+=mailAbschnitt("ELEKTRO 2. ZÄHLERSCHRANK / HAUSANSCHLUSS",["baujahr_zaehlerschrank","zaehlerschrank_erneuerung","zaehlerschrank_hoehe","zaehlerschrank_breite","zaehlerplaetze","unterverteilung_multimedia","baujahr_hak","hak_erneuerung","hauserdung","hausanschlussleistung"]);
+  text+=mailAbschnitt("ELEKTRO 3. PV / DACH",["dachflaeche_geeignet","dachflaeche","dachausrichtung","dachneigung","dacheindeckung","verschattung","speicher_gewuenscht","wallbox_gewuenscht"]);
+  text+=mailAbschnitt("ELEKTRO 4. ZEICHNUNGEN / DACHMASSE",["pv_zeichnungen_vorhanden","pv_dachzeichnung_vorhanden","pv_dachform","pv_anzahl_dachflaechen","pv_gebaeudelaenge","pv_gebaeudebreite","pv_dachueberstand","pv_abzugsflaeche","pv_dachflaeche_ergebnis"]);text+=mailAbschnitt("ELEKTRO 5. LEITUNGSWEGE / TIEFBAU",["leitungsfuehrung_gebaeude","kernbohrung_erforderlich","kernbohrung_anzahl","tiefbau_asphalt","tiefbau_pflasterung","tiefbau_gruenflaeche","leitung_meter","leitung_meter_hinweis"]);
+  text+=mailAbschnitt("ELEKTRO 6. PV-POTENZIAL",["pv_ergebnis"]);
+  text+=mailAbschnitt("ELEKTRO 7. NOTIZEN",["elektro_notizen"]);
+  text+="\nHinweis: Bitte vorher die passende PDF mit Fotos erstellen und diese Datei an die Mail anhängen.";
+  return text;
+}
+function mailSenden(){syncAlleGemeinsamenFelder();window.location.href="mailto:info@tuerk-sarstedt.de?subject="+encodeURIComponent("Projekt-Checkliste Wärmepumpe / Elektro")+"&body="+encodeURIComponent(datenAlsText(false))}
+function mailElektroSenden(){syncAlleGemeinsamenFelder();window.location.href="mailto:?subject="+encodeURIComponent("Elektro / PV-Checkliste")+"&body="+encodeURIComponent(datenAlsText(true))}
+window.addEventListener("DOMContentLoaded",function(){
+  initLogos();
+  initLiveSync();
+  ladenOhneMeldung();
+  syncAlleGemeinsamenFelder();
+  pvSetDachMethode();
+  pvSetMarkTool("roof");
+
+  const c=document.getElementById("pv_mark_canvas");
+  if(c){c.addEventListener("click",pvMarkCanvasClick);c.addEventListener("touchstart",pvMarkCanvasClick,{passive:false});}
+
+  const hash=window.location.hash.replace("#","");
+  if(hash==="waermepumpe" || hash==="elektro" || hash==="startseite"){showPage(hash);}
+
+  const btnWp=document.getElementById("btnWaermepumpe");
+  const btnEl=document.getElementById("btnElektro");
+  if(btnWp){btnWp.addEventListener("click",function(e){e.preventDefault();showPage("waermepumpe"); window.location.hash="waermepumpe";});}
+  if(btnEl){btnEl.addEventListener("click",function(e){e.preventDefault();showPage("elektro"); window.location.hash="elektro";});}
+});
+</script>
+</body>
+</html>
