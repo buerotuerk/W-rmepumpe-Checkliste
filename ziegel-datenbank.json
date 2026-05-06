@@ -1,0 +1,164 @@
+{
+  "braas_frankfurter": {
+    "name": "Braas Frankfurter Pfanne / Betonpfanne",
+    "hersteller": "BMI Braas",
+    "deckBreiteCm": 30.0,
+    "deckLaengeCm": 32.9,
+    "bedarf": "ca. 10,0 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 31,2–34,5 cm. Vor Ort nach Lattung prüfen.",
+    "quelle": "BMI/Braas Produktdatenblatt / Händlerdaten"
+  },
+  "braas_harzer_pfanne": {
+    "name": "Braas Harzer Pfanne / Harzer Pfanne 7",
+    "hersteller": "BMI Braas",
+    "deckBreiteCm": 33.0,
+    "deckLaengeCm": 33.0,
+    "bedarf": "ca. 9,0–10,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "braas_turmalin": {
+    "name": "Braas Turmalin",
+    "hersteller": "BMI Braas",
+    "deckBreiteCm": 24.0,
+    "deckLaengeCm": 36.8,
+    "bedarf": "ca. 11,0–11,7 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 35,5–38,0 cm. Vor Ort nach Lattung prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "braas_granat_11v": {
+    "name": "Braas Granat 11V",
+    "hersteller": "BMI Braas",
+    "deckBreiteCm": 23.0,
+    "deckLaengeCm": 35.9,
+    "bedarf": "ca. 11,4–12,9 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 33,8–38,0 cm. Vor Ort nach Lattung prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "braas_rubin_13v": {
+    "name": "Braas Rubin 13V",
+    "hersteller": "BMI Braas",
+    "deckBreiteCm": 21.4,
+    "deckLaengeCm": 35.0,
+    "bedarf": "ca. 13 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "creaton_magnum": {
+    "name": "Creaton Magnum",
+    "hersteller": "Creaton",
+    "deckBreiteCm": 29.6,
+    "deckLaengeCm": 40.0,
+    "bedarf": "ca. 8,2–8,7 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 39,0–41,1 cm. Vor Ort nach Lattung prüfen.",
+    "quelle": "Creaton/Händler Produktdaten, gerundet"
+  },
+  "creaton_titania": {
+    "name": "Creaton Titania",
+    "hersteller": "Creaton",
+    "deckBreiteCm": 25.4,
+    "deckLaengeCm": 37.5,
+    "bedarf": "ca. 10,4–11,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "creaton_futura": {
+    "name": "Creaton Futura",
+    "hersteller": "Creaton",
+    "deckBreiteCm": 23.7,
+    "deckLaengeCm": 36.0,
+    "bedarf": "ca. 11,5–12,5 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "creaton_klassik_biber": {
+    "name": "Creaton Klassik Biberschwanz",
+    "hersteller": "Creaton",
+    "deckBreiteCm": 18.0,
+    "deckLaengeCm": 15.5,
+    "bedarf": "ca. 34,0–38,0 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 14,5–16,5 cm. Vor Ort nach Deckungsart prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "nelskamp_r13s": {
+    "name": "Nelskamp Reform-Ziegel R 13 S",
+    "hersteller": "Nelskamp",
+    "deckBreiteCm": 21.5,
+    "deckLaengeCm": 33.8,
+    "bedarf": "ca. 12,7–15,0 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 31,0–36,5 cm. Nelskamp nennt ca.-Maße; vor Ort prüfen.",
+    "quelle": "Nelskamp Produktdaten/Prospekt"
+  },
+  "nelskamp_f10ue": {
+    "name": "Nelskamp F 10 Ü",
+    "hersteller": "Nelskamp",
+    "deckBreiteCm": 26.0,
+    "deckLaengeCm": 38.0,
+    "bedarf": "ca. 10,0–11,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "nelskamp_ms5": {
+    "name": "Nelskamp MS 5 / Großflächenziegel",
+    "hersteller": "Nelskamp",
+    "deckBreiteCm": 30.0,
+    "deckLaengeCm": 40.0,
+    "bedarf": "ca. 8,0–9,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "erlus_e58": {
+    "name": "Erlus Ergoldsbacher E58",
+    "hersteller": "Erlus",
+    "deckBreiteCm": 21.0,
+    "deckLaengeCm": 36.0,
+    "bedarf": "ca. 13,0–14,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Erlus Produktdaten, gerundet"
+  },
+  "erlus_e58s": {
+    "name": "Erlus Ergoldsbacher E58 S",
+    "hersteller": "Erlus",
+    "deckBreiteCm": 20.6,
+    "deckLaengeCm": 34.0,
+    "bedarf": "ca. 13,9–14,9 Stk./m²",
+    "hinweis": "Sanierungsziegel mit Verschiebebereich. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Erlus Produktdaten"
+  },
+  "laumans_tiefa_xltop": {
+    "name": "Laumans Tiefa XLTOP",
+    "hersteller": "Laumans",
+    "deckBreiteCm": 23.0,
+    "deckLaengeCm": 35.0,
+    "bedarf": "ab ca. 12,2 Stk./m²",
+    "hinweis": "Decklänge Mittelwert aus ca. 34,0–36,0 cm. Vor Ort nach Lattung prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "laumans_rheinland_variable": {
+    "name": "Laumans Rheinland variable",
+    "hersteller": "Laumans",
+    "deckBreiteCm": 21.5,
+    "deckLaengeCm": 35.0,
+    "bedarf": "ca. 13,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "jacobi_j11v": {
+    "name": "Jacobi J11v",
+    "hersteller": "Jacobi-Walther",
+    "deckBreiteCm": 23.5,
+    "deckLaengeCm": 36.0,
+    "bedarf": "ca. 11,0–12,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  },
+  "wienerberger_alegra_10": {
+    "name": "Wienerberger Koramic Alegra 10",
+    "hersteller": "Wienerberger / Koramic",
+    "deckBreiteCm": 26.0,
+    "deckLaengeCm": 38.5,
+    "bedarf": "ca. 10,0 Stk./m²",
+    "hinweis": "Überschlägiger Mittelwert. Exaktes Deckmaß objektbezogen prüfen.",
+    "quelle": "Hersteller-/Händlerangaben, gerundet"
+  }
+}
